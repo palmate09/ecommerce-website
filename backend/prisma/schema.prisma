@@ -30,6 +30,7 @@ model User {
   review                  Review[]
   reply                   Reply[]
   ratings                 Rantings[]
+  product                 Product[]
   admin                   Admin?                 @relation(fields: [adminId], references: [id])
   adminId                 String?
   createdAt               DateTime              @default(now())
@@ -81,12 +82,13 @@ model Product {
   price                 Int                 @unique
   OriginalPrice         Int                 @unique
   inStock               Boolean             @default(false)
-  featured              Boolean             @default(false)
   cartItems             cartItems[]  
   orderItems            OrderItems[]     
 
   admin                 Admin               @relation(fields: [adminId], references: [id])
   adminId               String   
+  user                  User                @relation(fields: [userId], references: [id])
+  userId                String
 }
 
 
@@ -129,7 +131,7 @@ model Reply {
 
 model  Category {
   id                  String                @id @default(uuid())
-  name                category              @unique
+  name                String                @unique
   products            Product[]
 
   admin               Admin                 @relation(fields: [adminId], references: [id])
@@ -137,12 +139,6 @@ model  Category {
 }
 
 
-enum category {
-  all
-  Chips
-  Chivda
-  Masala
-}
 
 
 model Cart {

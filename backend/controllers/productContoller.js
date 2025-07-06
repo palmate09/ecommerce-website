@@ -15,13 +15,13 @@ export const addCategory = async(req, res) => {
 
         const { name } = req.body;
         
-        if(!Object.values(category).includes(name)){
-            res.status(400).json({message: 'Invalid category provided'})
+        if(!name){
+            res.status(400).json({message: 'name has not been defiened yet'})
         }
 
         const addCategory = await client.category.create({
             data: {
-                name: name, 
+                name, 
                 admin: {
                     connect: {
                         id: adminId
@@ -79,8 +79,8 @@ export const updateCategory = async(req, res) => {
 
         const {name} = req.body; 
 
-        if(!Object.values(category).includes(name)){
-            res.status(400).json({message: 'Invalid category provided'})
+        if(!name){
+            res.status(400).json({message: 'name has not been received yet'})
         }
 
         const updateCategory = await client.category.update({
@@ -89,7 +89,7 @@ export const updateCategory = async(req, res) => {
                 id: categoryId
             }, 
             data: {
-                name: name
+                name
             }
         })
 
@@ -115,25 +115,60 @@ export const addProducts = async(req, res) => {
             res.status(400).json({message: 'adminId and categroyId has not been provided yet'})
         }
 
-        const { name, review, rating, price, OriginalPrice, inStock, featured } = req.body; 
+        const { name, description, price, OriginalPrice, inStock } = req.body; 
 
-        if(!name || !review || !rating || !price || !OriginalPrice || !inStock || !featured){
+        if(!name || !description || !price || !OriginalPrice || !inStock ){
             res.status(400).json({message: 'these all fields are required to fill first'})
         }
 
         const newProduct = await client.product.create({
-
+            data: {
+                name, 
+                description, 
+                price, 
+                OriginalPrice: OriginalPrice, 
+                inStock, 
+                category: {
+                    connect: {
+                        id: categoryId
+                    }
+                },
+                admin: {
+                    connect: {
+                        id: adminId
+                    }
+                }
+            }
         })
+
+        res.status(201).json({message: 'the new product has been successfully added!'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
     }
 }
 
+
+// issue is on category selection for enum or string 
 export const getProducts = async(req, res) => {
 
     try{
 
+        const userId = req.user.id; 
+        const { categoryId } = req.params
+
+        if(!adminId&& !categoryId){
+            res.status(400).json({message: 'adminId and categoryId have not been found'})
+        }
+
+        const getProducts = await client.product.findMany({
+            where: {
+                userId: userId, 
+                categoryId: categoryId
+            }
+        })
+
+        res.status(200).json({getProducts, message: 'all the products has been displayed'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
