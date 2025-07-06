@@ -16,7 +16,7 @@ router.get('/auth/google/callback',
             email: req.user.email
         }; 
 
-        const token = jwt.sign(user, process.env.JWT_SECRECT)
+        const token = jwt.sign(user, process.env.JWT_SECRECT, {expiresIn: '1h'})
 
         res.status(200).json(user, {message: `Your jwt: ${token}`}); 
     }
