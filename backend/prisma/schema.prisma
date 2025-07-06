@@ -26,6 +26,10 @@ model User {
   cart                    Cart?
   order                   Order[]
   passwordReset           PasswordResetToken[]
+  payment                 payment[]
+  review                  Review[]
+  reply                   Reply[]
+  ratings                 Rantings[]
   admin                   Admin?                 @relation(fields: [adminId], references: [id])
   adminId                 String?
   createdAt               DateTime              @default(now())
@@ -47,11 +51,11 @@ model Address {
   userId                  String               
   user                    User                  @relation(fields: [userId], references: [id])
   flat_no                 String
-  Floor_no                Int
+  Floor_no                String
   nearby_landmark         String
   description             String?
-  pincode                 Int
-  addressType             AddressType
+  pincode                 String
+  addressType             AddressType           @unique
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 }
@@ -71,8 +75,9 @@ model Product {
   description           String?
   category              Category            @relation(fields: [categoryId], references: [id])
   categoryId            String
-  review                Int?     
-  rating                Int?
+  review                Review[]
+  reviewCount           Int?     
+  rating                Rantings[]
   price                 Int                 @unique
   OriginalPrice         Int                 @unique
   inStock               Boolean             @default(false)
@@ -85,9 +90,46 @@ model Product {
 }
 
 
+model Rantings {
+  id                  Int                   @id @default(autoincrement())
+  rating              String?
+  ProductId           String?
+  product             Product?              @relation(fields: [ProductId], references: [id])                
+  userId              String?               @unique
+  user                User?                 @relation(fields: [userId], references: [id])
+}
+
+
+model Review {
+  id                    String              @id @default(uuid())
+  userId                String?
+  user                  User?                @relation(fields: [userId], references: [id])
+  productId             String?
+  product               Product?            @relation(fields: [productId], references: [id])
+  description           String?
+  like                  Boolean?             @default(false)
+  reply                 Reply[]         
+  createdAt             DateTime            @default(now())
+  updateAt              DateTime            @updatedAt
+}
+
+
+model Reply {
+  id                   Int              @id @default(autoincrement())
+  reviewId             String?
+  review               Review?           @relation(fields: [reviewId], references: [id])
+  descrption           String?
+  like                 Boolean?          @default(false)
+  user                 User?          @relation(fields: [userId], references: [id])
+  userId               String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+
 model  Category {
   id                  String                @id @default(uuid())
-  name                category
+  name                category              @unique
   products            Product[]
 
   admin               Admin                 @relation(fields: [adminId], references: [id])
@@ -96,6 +138,7 @@ model  Category {
 
 
 enum category {
+  all
   Chips
   Chivda
   Masala
@@ -128,7 +171,7 @@ model Order {
   items               OrderItems[]
   total               Float
   orderstatus         orderStatus
-  paymentStatus       paymentStatus                   
+  payment             payment[]
   createdAt           DateTime            @default(now())
 }
 
@@ -139,6 +182,17 @@ enum orderStatus {
   completed
   order_processing
   out_for_delivery
+}
+
+
+model payment {
+  id                  String              @id @default(uuid())
+  orderId             String
+  order               Order               @relation(fields: [orderId], references: [id])
+  userId              String
+  user                User                @relation(fields: [userId], references: [id])
+  status              paymentStatus
+  createdAt           DateTime            @default(now())
 }
 
 
@@ -171,4 +225,14 @@ model Admin {
   product           Product[]
   category          Category[]
   user              User[]
+  forgotpassToken   ForgotPasswordTokenAdmin[]
+}
+
+model ForgotPasswordTokenAdmin {
+  id                String            @id @default(uuid())
+  token             String            @unique
+  admin             Admin             @relation(fields: [adminId], references: [id])
+  adminId           String
+  expiresAt         DateTime
+  createdAt         DateTime          @default(now())
 }
