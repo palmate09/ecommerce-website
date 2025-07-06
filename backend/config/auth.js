@@ -2,7 +2,7 @@ import passport from 'passport'
 import { Strategy } from 'passport-google-oauth20'
 import client from './database.js' 
 
-passport.use(new Strategy({
+const user = passport.use(new Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID, 
     clientSecrect: process.env.GOOGLE_CLIENT_SECRET, 
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
@@ -32,5 +32,5 @@ passport.use(new Strategy({
 })); 
 
 
-export default passport; 
+export default user; 
 
