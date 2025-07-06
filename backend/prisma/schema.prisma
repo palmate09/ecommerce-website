@@ -26,8 +26,8 @@ model User {
   cart                    Cart?
   order                   Order[]
   passwordReset           PasswordResetToken[]
-  admin                   Admin                 @relation(fields: [adminId], references: [id])
-  adminId                 String
+  admin                   Admin?                 @relation(fields: [adminId], references: [id])
+  adminId                 String?
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt                                 
 }

@@ -1,6 +1,8 @@
 import client from "../config/database.js"
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import transporter from '../config/nodemailer.js'
+import { randomBytes } from "node:crypto";
 
 
 export const signup = async(req, res) => {
@@ -55,17 +57,17 @@ export const login = async(req, res) => {
 
     try {
 
-        const { email , password } = req.body; 
+        const { identifier , password } = req.body; 
 
-        if(!email || !password ){
-            res.status(400).json({message: 'fill the email and password first'})
+        if(!identifier || !password ){
+            res.status(400).json({message: 'fill the email or username and password first'})
         }
 
         const user = await client.user.findFirst({
             where: {
                 OR: [
-                    {email: email}, 
-                    {username: email}
+                    {email: identifier}, 
+                    {username: identifier}
                 ]
             }, 
             select: {
@@ -163,7 +165,59 @@ export const forgotPasswordReq = async(req, res) => {
 
     try {
 
+        const { email } = req.body; 
+
+        if(!email){
+            res.status(400).json({message: 'fill the email first'})
+        }
+
+        const user = await client.user.findFirst({
+            where: {
+                email
+            }
+        })
+
+        if(!user){
+            res.status(400).json({message: 'user not found'})
+        }
+
+        const token = randomBytes(15).toString('base64url')
+
+        await client.passwordResetToken.deleteMany({
+            where: {
+                userId: user.id,
+                expireAt: {
+                    gt: new Date()
+                }
+            }
+        })
+
+        const expiry = new Date(Date.now() + 3600000)
+
+        const tokenCreate = await client.passwordResetToken.create({
+            data: {
+                token: token, 
+                expireAt: expiry, 
+                user: {
+                    connect: {
+                        id: user.id
+                    }
+                }
+            }
+        })
+
+        const resetUrl = `http://localhost:${process.env.PORT}/api/v1/users/forgot-password?token=${token}`
+
+        const info = await transporter.sendMail({
+            from: process.env.USER_EMAIL, 
+            to: user.email, 
+            subject: 'Password Reset Request',
+            text: `this is the token for the reset password :- ${tokenCreate.token}
+                   The ResetUrl is :- ${resetUrl}` 
+        })
         
+
+        res.status(200).json(tokenCreate.token);
     }
     catch(e){
         res.status(500).json({error: e.message, message: "Internal server Error"})
@@ -173,6 +227,62 @@ export const forgotPasswordReq = async(req, res) => {
 export const forgotPassword = async(req, res) => {
 
     try {
+
+        const { token } = req.params;
+        const { password } = req.body; 
+
+        if(!token){
+            res.status(400).json({message: 'Token has not been provided'})
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&_])[A-Za-z\d@$!%*?#&_]{8,}$/;
+        if(!passwordRegex.test(password)){
+            res.status(400).json({message: 'The password provided is not in correct format'})
+        }
+
+        const resetToken = await client.passwordResetToken.findUnique({
+            where: {
+                token: token
+            },
+            include: {
+                user: true
+            }
+        })
+
+        if(!resetToken ){
+            res.status(400).json({message: 'Invalid token'})
+        }
+
+        if(new Date() > resetToken.expireAt){
+
+            await client.passwordResetToken.delete({
+                where: {
+                    id: resetToken.id
+                }
+            })
+
+            return res.status(400).json({message: 'Password reset token has expired. '})
+        } 
+
+
+        const HashedPassword = await bcrypt.hash(password, 8)
+
+        const updatePassword = await client.user.update({
+            where: {
+                id: resetToken.user.id
+            }, 
+            data: {
+                password: HashedPassword
+            }
+        })
+
+        await client.passwordResetToken.delete({
+            where: {
+                id: resetToken.id
+            }
+        })
+
+        res.status(200).json({message: 'password has been successfully updated'})
 
     }
     catch(e){
