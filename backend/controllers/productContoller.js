@@ -42,16 +42,16 @@ export const deleteCategory = async(req, res) => {
     try{
 
         const adminId = req.admin.id; 
-        const { categoryId } = req.params; 
+        const { categoryName } = req.params; 
 
-        if(!adminId && !categoryId){
-            res.status(400).json({message: 'adminId and categoryId have not been provided'})
+        if(!adminId && !categoryName){
+            res.status(400).json({message: 'adminId and categoryName have not been provided'})
         }
 
         const deleteCategory = await client.category.delete({
             where: {
                 adminId: adminId, 
-                id: categoryId
+                name: categoryName
             }
         })
 
@@ -71,10 +71,10 @@ export const updateCategory = async(req, res) => {
     try{
 
         const adminId = req.admin.id; 
-        const {categoryId} = req.params; 
+        const {categoryName} = req.params; 
 
-        if(!adminId && !categoryId){
-            res.status(400).json({message: 'adminId and categoryId has not been found'})
+        if(!adminId && !categoryName){
+            res.status(400).json({message: 'adminId and categoryName has not been found'})
         }
 
         const {name} = req.body; 
@@ -86,7 +86,7 @@ export const updateCategory = async(req, res) => {
         const updateCategory = await client.category.update({
             where: {
                 adminId: adminId, 
-                id: categoryId
+                name: categoryName
             }, 
             data: {
                 name
@@ -109,10 +109,10 @@ export const addProducts = async(req, res) => {
     try{
 
         const adminId = req.admin.id; 
-        const {categoryId} = req.params;
+        const { categoryName } = req.params;
         
-        if(!adminId && categoryId){
-            res.status(400).json({message: 'adminId and categroyId has not been provided yet'})
+        if(!adminId && !categoryName){
+            res.status(400).json({message: 'adminId and categoryName has not been provided yet'})
         }
 
         const { name, description, price, OriginalPrice, inStock } = req.body; 
@@ -130,7 +130,7 @@ export const addProducts = async(req, res) => {
                 inStock, 
                 category: {
                     connect: {
-                        id: categoryId
+                        name: categoryName
                     }
                 },
                 admin: {
@@ -148,23 +148,40 @@ export const addProducts = async(req, res) => {
     }
 }
 
-
 // issue is on category selection for enum or string 
+// get all the products for the user and particular category named products as well 
 export const getProducts = async(req, res) => {
 
     try{
 
         const userId = req.user.id; 
-        const { categoryId } = req.params
+        const { categoyName } = req.params
 
-        if(!adminId&& !categoryId){
-            res.status(400).json({message: 'adminId and categoryId have not been found'})
+        if(!categoyName && !userId){
+            res.status(400).json({message: 'categoryName and userId have not been found'})
+        }
+
+        const user = await client.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+
+        if(user.id === userId && categoyName === "All"){
+            const getProducts = await client.product.findMany({
+                where: {
+                    userId: user.id
+                }
+            })
+
+            res.status(200).json({getProducts, message: 'all product list has been received successfully!'})
+            return; 
         }
 
         const getProducts = await client.product.findMany({
-            where: {
-                userId: userId, 
-                categoryId: categoryId
+            where: { 
+                userId: userId,
+                categoryName: categoyName
             }
         })
 
@@ -175,10 +192,42 @@ export const getProducts = async(req, res) => {
     }
 }
 
+// get all the products and particular category named products for the admin
 export const getAdminProducts = async(req, res) => {
 
     try{
 
+        const adminId = req.admin.id; 
+        const {categoryName} = req.params; 
+        
+        if(!adminId && !categoryName){
+            res.status(400).json({message: 'adminId and categoryName have not been defiend yet'})
+        }
+
+        const admin = await client.admin.findUnique({
+            where: {
+                id: adminId
+            }
+        })
+
+        if(admin.id === adminId && categoryName === 'All'){
+            const getAdminProducts = await client.product.findMany({
+                where: {
+                    adminId: admin.id
+                }
+            })
+
+            res.status(200).json({getAdminProducts, message: 'all the admin products have been received successfully!'})
+        }
+
+        const getAdminProducts = await client.product.findMany({
+            where: {
+                adminId: admin.id, 
+                categoryName: categoryName
+            }
+        })
+
+        res.status(200).json({getAdminProducts, message: 'all the admin prodcuts have been received'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
@@ -189,6 +238,36 @@ export const updateProducts = async(req, res) => {
 
     try{
 
+        const adminId = req.admin.id; 
+        const { categoryName, productId } = req.params
+
+        if(!categoryName && !adminId && !productId){
+            res.status(400).json({message: "adminId and categoryName and productId have not been  received!"})
+        }
+
+        const { name, description, price, OriginalPrice, inStock } = req.body; 
+
+        if(!name || !description || !price || !OriginalPrice || !inStock){
+            res.status(400).json({message: 'all these given fields are required to fill first!'})
+        }
+
+        const updateProducts = await client.product.update({
+            where: {
+                adminId: adminId,
+                categoryName: categoryName, 
+                id: productId
+            },
+            data: {
+                name, 
+                description, 
+                price, 
+                OriginalPrice, 
+                inStock
+            }
+        })
+        
+
+        res.status(200).json({message: 'product data has been successfully updated'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
@@ -199,7 +278,27 @@ export const deleteProducts = async(req, res) => {
 
     try{
 
-    }
+        const adminId = req.admin.id; 
+        const { categoyName, productId } = req.params; 
+
+        if(!adminId && !categoyName && !productId){
+            res.status(400).json({message: 'adminId and category name and productId have not received yet'})
+        }
+
+        const deleteProducts = await client.product.delete({
+            where: {
+                adminId: adminId, 
+                categoryName: categoyName, 
+                id: productId
+            }
+        })
+
+        if(!deleteProducts){
+            res.status(400).json({message: 'the given products has not been deleted'})
+        }
+
+        res.status(200).json({message: 'the given product has been successfully deleted!'})
+    }   
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
     }
