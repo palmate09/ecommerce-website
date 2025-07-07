@@ -5,7 +5,7 @@ const router = Router();
 
 router.post('/users/address/addAddress', userAuth, addAddress); 
 router.delete('/users/address/deleteAddress', userAuth, removeAddress); 
-router.update('/users/address/updateAddress', userAuth, updateAddress)
+router.put('/users/address/updateAddress', userAuth, updateAddress)
 router.get('/users/getAllAddress', userAuth, getAllAddress); 
 router.get('/users/address/getAddress', userAuth, getAddress); 
 

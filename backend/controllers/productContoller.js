@@ -1,5 +1,4 @@
 import client from '../config/database.js'
-import { category } from '../generated/prisma/index.js';
 import validator from 'validator'
 
 

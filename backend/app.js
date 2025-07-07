@@ -5,6 +5,7 @@ import userRouter from './routes/userRoutes.js'
 import addressRouter from './routes/addressRoute.js'
 import adminRouter from './routes/adminRoute.js'
 import productRouter from './routes/productRoute.js'
+import reviewRouter from './routes/reviewRoute.js'
 dotenv.config(); 
 
 
@@ -17,5 +18,6 @@ app.use(`/api/v1`, userRouter);
 app.use(`/api/v1`, addressRouter); 
 app.use(`/api/v1`, adminRouter); 
 app.use(`/api/v1`, productRouter); 
+app.use(`/api/v1`, reviewRouter); 
 
 app.listen( process.env.PORT|| 8080);
