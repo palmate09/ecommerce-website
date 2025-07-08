@@ -8,6 +8,7 @@ import productRouter from './routes/productRoute.js'
 import reviewRouter from './routes/reviewRoute.js'
 import cartRouter from './routes/cartRoutes.js'
 import paymentRouter from './routes/paymentRoute.js'
+import orderRouter from './routes/orderRoute.js'
 dotenv.config(); 
 
 
@@ -23,6 +24,8 @@ app.use(`/api/v1`, productRouter);
 app.use(`/api/v1`, reviewRouter); 
 app.use(`/api/v1`, cartRouter);
 app.use(`/api/v1`, paymentRouter); 
+app.use(`/api/v1`, orderRouter);
+
 
 
 app.listen( process.env.PORT|| 8080);

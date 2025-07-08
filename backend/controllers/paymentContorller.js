@@ -1,4 +1,5 @@
 import client from '../config/database.js'
+import { paymentStatus } from '../generated/prisma/index.js';
 
 
 // Takes the cart of a user first 
@@ -43,15 +44,15 @@ export const payment = async(req, res) => {
             res.status(400).json({message: 'cart not found'})
         }
 
-        const { paymentStatus } = req.body; 
+        const { status } = req.body; 
 
-        if(!paymentStatus){
-            res.status(400).json({message: 'paymentStatus is not received'})
+        if(!Object.values(paymentStatus).includes(status)){
+            res.status(400).json({message: 'payment status provided is invalid'})
         }
         
         const paymentDetails = await client.payment.create({
             data: {
-                status: paymentStatus,
+                status: status,
                 amount: cartItemsSum._sum, 
                 user: {
                     connect: {
@@ -87,7 +88,7 @@ export const payment = async(req, res) => {
 
             newOrder = await client.order.create({
                 data: {
-                    orderstatus: 'PLACED', 
+                    orderstatus: 'CANCELLED', 
                     total: paymentDetails.amount, 
                     user: {
                         connect: {
