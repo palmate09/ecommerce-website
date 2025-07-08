@@ -37,10 +37,10 @@ export const addCart = async(req, res) => {
 
     try{
 
-        const userId = req.user.id; 
-
-        if(!Array.isArray(items) || items.length === 0){
-            res.status(400).json({message: 'items should present in the cart'})
+        const userId = req.user.id;
+        
+        if(!userId){
+            res.status(400).json({message: 'userId not found'})
         }
 
         let newCart = await client.cart.findUnique({
