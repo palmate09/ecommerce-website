@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { userAuth } from '../middlewares/userAuth.js'
 import { adminAuth } from "../middlewares/adminAuth.js";
-import { deleteOrder, deleteOrders, getAdminOrder, getAdminOrders, getOrder, getParticularOrder, updateOrderStatus } from "../controllers/orderController";
+import { deleteOrder, deleteOrders, getAdminOrder, getAdminOrders, getOrder, getParticularOrder, updateOrderStatus } from "../controllers/orderController.js";
 const router = Router(); 
 
 

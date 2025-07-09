@@ -112,7 +112,7 @@ export const AdminProfile = async(req, res) => {
             res.status(400).json({message: 'admin not found'})
         }
 
-        res.status(200).json({message: 'admin profile data has been successfully received!'})
+        res.status(200).json({admin, message: 'admin profile data has been successfully received!'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
@@ -294,12 +294,9 @@ export const getAllUsers = async(req, res) => {
             res.status(400).json({message: 'adminId is not provided'})
         }
 
-        const userList = await client.admin.findMany({
+        const userList = await client.user.findMany({
             where: {
-                id: adminId
-            }, 
-            select: {
-                user: true
+                adminId: adminId
             }
         })
 
@@ -315,7 +312,7 @@ export const getParticularUser = async(req, res) => {
     try{
 
         const adminId = req.admin.id; 
-        const {userId} = req.params;  
+        const userId = req.user.id;  
 
         if(!adminId && !userId){
             res.status(400).json({message: 'adminId and userId is not defined'})

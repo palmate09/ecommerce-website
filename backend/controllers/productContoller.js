@@ -140,7 +140,7 @@ export const addProducts = async(req, res) => {
             }
         })
 
-        res.status(201).json({message: 'the new product has been successfully added!'})
+        res.status(201).json({newProduct, message: 'the new product has been successfully added!'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
@@ -152,11 +152,10 @@ export const addProducts = async(req, res) => {
 export const getProducts = async(req, res) => {
 
     try{
+ 
+        const { categoryName } = req.params
 
-        const userId = req.user.id; 
-        const { categoyName } = req.params
-
-        if(!categoyName && !userId){
+        if(!categoryName && !userId){
             res.status(400).json({message: 'categoryName and userId have not been found'})
         }
 
@@ -166,23 +165,14 @@ export const getProducts = async(req, res) => {
             }
         })
 
-        if(user.id === userId && categoyName === "All"){
-            const getProducts = await client.product.findMany({
-                where: {
-                    userId: user.id
-                }
-            })
-
-            res.status(200).json({getProducts, message: 'all product list has been received successfully!'})
-            return; 
-        }
 
         const getProducts = await client.product.findMany({
             where: { 
-                userId: userId,
-                categoryName: categoyName
+                categoryName: categoryName
             }
         })
+
+        console.log(getProducts);
 
         res.status(200).json({getProducts, message: 'all the products has been displayed'})
     }

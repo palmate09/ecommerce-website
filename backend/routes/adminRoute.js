@@ -2,6 +2,7 @@ import {Router} from 'express'
 import { AdminForgotPassword, AdminforgotPasswordReq, AdminLogin, AdminProfile, Adminsignup, getAllUsers, getParticularUser, updateAdminProfile } from '../controllers/adminContoller.js';
 import { LoginLimiter } from '../middlewares/rateLimiter.js'
 import { adminAuth } from '../middlewares/adminAuth.js'
+import { userAuth } from '../middlewares/userAuth.js';
 const router = Router(); 
 
 
@@ -12,7 +13,7 @@ router.put('/admins/profile', adminAuth, updateAdminProfile)
 router.post('/admins/forgot_password', AdminforgotPasswordReq)
 router.post('/admins/forgot_password/:token', AdminForgotPassword)
 router.get('/admins/getAllusers', adminAuth, getAllUsers)
-router.get('/admins/getParticularUser', adminAuth, getParticularUser)
+router.get('/admins/getParticularUser', adminAuth, userAuth, getParticularUser)
 
 
 export default router; 

@@ -4,9 +4,9 @@ import { addAddress, getAddress, getAllAddress, removeAddress, updateAddress } f
 const router = Router(); 
 
 router.post('/users/address/addAddress', userAuth, addAddress); 
-router.delete('/users/address/deleteAddress', userAuth, removeAddress); 
-router.put('/users/address/updateAddress', userAuth, updateAddress)
+router.delete('/users/address/deleteAddress/:addressId', userAuth, removeAddress); 
+router.put('/users/address/updateAddress/:addressId', userAuth, updateAddress)
 router.get('/users/getAllAddress', userAuth, getAllAddress); 
-router.get('/users/address/getAddress', userAuth, getAddress); 
+router.get('/users/address/getAddress/:addressId', userAuth, getAddress); 
 
 export default router; 

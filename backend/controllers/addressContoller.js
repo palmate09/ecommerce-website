@@ -64,6 +64,7 @@ export const removeAddress = async(req, res) => {
 
         const removeAddress = await client.address.delete({
             where: {
+                userId: userId, 
                 id: addressId
             }
         })
@@ -72,7 +73,7 @@ export const removeAddress = async(req, res) => {
             res.status(400).json({message: 'address is not removed'})
         }
 
-        res.status(200).josn({message: 'address has been removed successfully'})
+        res.status(200).json({message: 'address has been removed successfully'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: "Internal server Error"})
@@ -135,12 +136,9 @@ export const getAllAddress = async(req, res) => {
             res.status(400).json({message: 'userId not found'})
         }
 
-        const address = client.user.findMany({
+        const address = await client.address.findMany({
             where: {
-                id: userId
-            }, 
-            select: {
-                address: true
+                userId: userId
             }
         })
 
@@ -148,7 +146,7 @@ export const getAllAddress = async(req, res) => {
             res.status(400).json({message: 'addresses not found'})
         }
 
-        res.status(200).json({address, message: 'all addresses for this user has been received successfully!'})
+        res.status(200).json(address, {message: 'all addresses for this user has been received successfully!'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: "Internal server Error"})
