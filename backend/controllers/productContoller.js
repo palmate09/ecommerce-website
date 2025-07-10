@@ -155,16 +155,16 @@ export const getProducts = async(req, res) => {
  
         const { categoryName } = req.params
 
-        if(!categoryName && !userId){
+        if(!categoryName ){
             res.status(400).json({message: 'categoryName and userId have not been found'})
         }
 
-        const user = await client.user.findUnique({
-            where: {
-                id: userId
-            }
-        })
 
+        if(categoryName === 'All'){
+            const getProducts = await client.product.findMany()
+
+            res.status(200).json({ getProducts, message: 'users can able to access the products'})
+        }
 
         const getProducts = await client.product.findMany({
             where: { 
@@ -199,12 +199,14 @@ export const getAdminProducts = async(req, res) => {
             }
         })
 
+
         if(admin.id === adminId && categoryName === 'All'){
             const getAdminProducts = await client.product.findMany({
                 where: {
                     adminId: admin.id
                 }
             })
+            console.log(getAdminProducts)
 
             res.status(200).json({getAdminProducts, message: 'all the admin products have been received successfully!'})
         }
@@ -216,7 +218,7 @@ export const getAdminProducts = async(req, res) => {
             }
         })
 
-        res.status(200).json({getAdminProducts, message: 'all the admin prodcuts have been received'})
+        res.status(200).json(getAdminProducts, { message: 'all the admin prodcuts have been received'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
