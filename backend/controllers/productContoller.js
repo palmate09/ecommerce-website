@@ -1,5 +1,4 @@
 import client from '../config/database.js'
-import validator from 'validator'
 
 
 export const addCategory = async(req, res) => {

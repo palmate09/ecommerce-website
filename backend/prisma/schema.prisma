@@ -29,9 +29,8 @@ model User {
   payment                 payment[]
   review                  Review[]
   reply                   Reply[]
-  ratings                 Rantings[]
+  ratings                 Ratings[]
   product                 Product[]
-  like                    like[]
   admin                   Admin?                 @relation(fields: [adminId], references: [id])
   adminId                 String?
   createdAt               DateTime              @default(now())
@@ -79,7 +78,7 @@ model Product {
   categoryName          String
   review                Review[]
   reviewCount           Int?     
-  rating                Rantings[]
+  rating                Ratings[]
   price                 Float                 @unique
   OriginalPrice         Float                 @unique
   inStock               Boolean             @default(false)
@@ -102,7 +101,7 @@ model  Category {
 }
 
 
-model Rantings {
+model Ratings {
   id                  Int                   @id @default(autoincrement())
   rating              String?
   ProductId           String
@@ -119,23 +118,11 @@ model Review {
   productId             String?
   product               Product?            @relation(fields: [productId], references: [id])
   description           String?
-  like                  like[]
   reply                 Reply[]         
   createdAt             DateTime            @default(now())
   updateAt              DateTime            @updatedAt
 }
 
-
-model like {
-  id                   Int                @id @default(autoincrement())
-  islike               Boolean            @default(false)
-  user                 User               @relation(fields: [userId], references: [id])
-  userId               String
-  review               Review?             @relation(fields: [reviewId], references: [id])
-  reviewId             String?
-  replyId              Int?
-  reply                Reply?              @relation(fields: [replyId], references: [id])
-}
 
 
 model Reply {
@@ -143,8 +130,7 @@ model Reply {
   reviewId             String
   review               Review           @relation(fields: [reviewId], references: [id])
   description          String?
-  like                 like[]
-  user                 User          @relation(fields: [userId], references: [id])
+  user                 User             @relation(fields: [userId], references: [id])
   userId               String
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt

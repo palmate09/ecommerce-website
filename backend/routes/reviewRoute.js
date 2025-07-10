@@ -1,7 +1,7 @@
 import {Router} from 'express'
 import { userAuth } from '../middlewares/userAuth.js'
 import { adminAuth } from '../middlewares/adminAuth.js'
-import { addlike, addRatings, addReply, addreplylike, addReview, getAdminReviews, getAllLIkes, getAllReplies, getAllReviews, getAllReviewsUser, getlikes, getParticularReplies, getparticularReview, getRatings, removelike, removeRatings, removeReply, removereplyLike, removeReview, updateLike, updateRatings, updateReply, updatereplylike, updateReview } from '../controllers/reviewController.js';
+import {  addRatings, addReply,  addReview, getAdminReviews,  getAllReplies, getAllReviews, getAllReviewsUser, getParticularReplies, getparticularReview, getRatings,  removeRatings, removeReply,  removeReview,  updateRatings, updateReply, updateReview } from '../controllers/reviewController.js';
 const router = Router(); 
 
 
@@ -15,19 +15,11 @@ router.put('/users/:productId/:reviewId', userAuth, updateReview)
 router.get('/:productId', userAuth, getAllReviews)
 router.get('/users/:productId', userAuth, getAllReviewsUser)
 router.get('/users/:productId/:reviewId', userAuth, getparticularReview)
-router.get('/users/:reviewId', userAuth, getAllReplies)
-router.get('/users/:reviewId/:replyId', userAuth, getParticularReplies)
-router.post('/users/:reviewId', userAuth, addReply)
-router.delete('/users/:reviewId/:replyId', userAuth, removeReply)
-router.put('/users/:reviewId/:replyId', userAuth, updateReply)
-router.post('/users/:reviewId', userAuth, addlike)
-router.put('/users/:reviewId/:likeId', userAuth, updateLike)
-router.delete('/users/:reviewId/:likeId', userAuth, removelike)
-router.get('/users/:reviewId', userAuth, getAllLIkes)
-router.get('/users/:replyId', userAuth, getlikes)
-router.post('/users/:replyId', userAuth, addreplylike)
-router.put('/users/:replyId/:likeId', userAuth, updatereplylike)
-router.delete('/users/:replyId/:likeId', userAuth, removereplyLike)
-router.get('/users/:productId', adminAuth, getAdminReviews)
+router.post('/users/:reviewId/addreply', userAuth, addReply)
+router.get('/:reviewId/getAllreplies', userAuth, getAllReplies)
+router.get('/users/:reviewId/:replyId/getParticularreply', userAuth, getParticularReplies)
+router.delete('/users/:reviewId/:replyId/removeReply', userAuth, removeReply)
+router.put('/users/:reviewId/:replyId/updateReply', userAuth, updateReply)
+router.get('/admins/:productId', adminAuth, getAdminReviews)
 
-export default router; 
+export default router;

@@ -18,7 +18,7 @@ export const addRatings = async(req, res) => {
             res.status(400).json({message: 'Invalid ratings submitted'})
         }
 
-        const addratings = await client.rantings.create({
+        const addratings = await client.ratings.create({
             data: {
                 rating, 
                 user: {
@@ -52,7 +52,7 @@ export const removeRatings = async(req, res) => {
             res.status(400).json({message: 'userId and productId and RatingsId have not been received yet'})
         }
 
-        const deleteProduct = await client.rantings.delete({
+        const deleteProduct = await client.ratings.delete({
             where: {
                 userId: userId,
                 ProductId: productId
@@ -87,7 +87,7 @@ export const updateRatings = async(req, res) => {
             res.status(400).json({message: 'ratings have not been received yet'})
         }
 
-        const updateRatings = await client.rantings.update({
+        const updateRatings = await client.ratings.update({
             where: {
                 userId: userId, 
                 ProductId: productId
@@ -96,6 +96,8 @@ export const updateRatings = async(req, res) => {
                 rating
             }
         })
+
+        res.status(200).json({message: 'your ratings has been updated successfully!'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
@@ -113,10 +115,10 @@ export const getRatings = async(req, res) => {
             res.status(400).json({message: 'userId and prodcutId have not been received yet'})
         }
 
-        const getRatings = await client.rantings.findMany({
+        const getRatings = await client.ratings.findUnique({
             where: {
                 userId: userId, 
-                productId: productId
+                ProductId: productId
             }
         })
 
@@ -147,7 +149,6 @@ export const addReview = async(req, res) => {
         const addreview = await client.review.create({
             data: {
                 description, 
-                like, 
                 user: {
                     connect: {
                         id: userId
@@ -259,6 +260,7 @@ export const getAllReviews = async(req, res) => {
     }
 }
 
+
 // get all the review of the particular user; 
 export const getAllReviewsUser = async(req, res) => {
 
@@ -311,25 +313,29 @@ export const getparticularReview = async(req, res) => {
     }
 }
 
+
+
+
+
+
 // get all the replies for the particular review
 export const getAllReplies = async(req, res) => {
 
     try{
         
-        const { reviewId } = req.params; 
+        const {reviewId } = req.params
 
         if(!reviewId){
-            res.status(400).json({message: 'reviewId has not been received yet'})
+            res.status(400).json({message: 'reviewId and productId have not been received yet'})
         }
 
-        const getAllReplies = await client.review.findMany({
-            where: {
-                id: reviewId
-            },
-            select: {
-                reply: true
+        const getAllReplies = await client.reply.findMany({
+            where:{
+                reviewId: reviewId
             }
         })
+
+        res.status(200).json({getAllReplies, message: 'all the reviews are received successfully!'})
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
@@ -348,11 +354,13 @@ export const getParticularReplies = async(req, res) => {
             res.status(400).json({message: 'userId and reviewId have not been received yet'})
         }
 
+        const id = parseInt(replyId)
+
         const getParticularReplies = await client.reply.findUnique({
             where: {
                 userId: userId, 
                 reviewId: reviewId,
-                id: replyId
+                id: id
             }
         })
 
@@ -406,15 +414,19 @@ export const removeReply =async(req, res) => {
         const userId = req.user.id; 
         const { reviewId , replyId } = req.params; 
 
+    
+
         if(!userId || !reviewId || !replyId){
             res.status(400).json({message: 'userId and reviewId and replyId have not been received'})
         }
+
+        const id  = parseInt(replyId)
 
         const removeReply = await client.reply.delete({
             where: {
                 userId: userId, 
                 reviewId: reviewId, 
-                id: replyId
+                id: id
             }
         })
 
@@ -443,11 +455,13 @@ export const updateReply = async(req, res) => {
 
         const { description } = req.body; 
 
+        const id = parseInt(replyId); 
+
         const updateReply  = await client.reply.update({
             where: {
                 userId: userId, 
                 reviewId: reviewId, 
-                id: replyId
+                id: id
             },
             data: {
                 description
@@ -461,288 +475,21 @@ export const updateReply = async(req, res) => {
     }
 }
 
-// add like for the particular review by particular user
-export const addlike = async(req, res) => {
-
-    try{
-
-        const userId = req.user.id; 
-        const { reviewId } = req.params; 
-
-        if(!userId || !reviewId){
-            res.status(400).json({message: 'userId and reviewId have not received'})
-        }
-        
-        const { islike } =req.body;
-        
-        if(typeof(islike) !== 'boolean'){
-            res.status(400).json({message: 'islike should be boolean'})
-        }
-
-        const addlike = await client.like.create({
-            data: {
-                islike,
-                user: {
-                    connect: {
-                        id: userId
-                    }
-                }, 
-                review: {
-                    connect: {
-                        id: reviewId
-                    }
-                }
-            }
-        })
-        
-        res.status(201).json({message: 'like is added to the review successfully!'})
-
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-export const updateLike = async(req, res) => {
-
-    try{
-
-        const userId = req.user.id; 
-        const { reviewId, likeId } = req.params;
-
-        if(!userId || !reviewId || !likeId){
-            res.status(400).json({message: 'userId and reviewId and likeId have not been received'})
-        }
-
-        const { islike } = req.body; 
-        if(typeof(islike) === 'boolean'){
-            res.status(400).json({message: 'the islike should be boolen'})
-        }
-
-        const updateLike = await client.like.update({
-            where: {
-                userId: userId, 
-                reviewId: reviewId, 
-                id: likeId
-            }, 
-            data: {
-                islike
-            }
-        })
-
-        res.status(200).json({message: 'like has been successfully updated'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-
-export const removelike = async(req, res) => {
-
-    try{
-
-        const userId = req.user.id; 
-        const { reviewId, likeId} = req.params; 
-
-        if(!userId || !reviewId || !likeId){
-            res.status(400).json({message: 'userId and reviewId and likeId are not received'})
-        }
-
-        const removeLike = await client.like.delete({
-            where: {
-                userId: userId, 
-                reviewId: reviewId, 
-                id: likeId
-            }
-        })
-
-        if(!removeLike){
-            res.status(400).json({message: 'like has not been deleted'})
-        }
-
-        res.status(200).json({message: 'like for the post has been deleted successfully'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-// get all the like for the particular review
-export const getAllLIkes = async(req, res) => {
-
-    try{
-
-        const { reviewId } = req.params
-        
-        if(!reviewId){
-            res.status(400).json({message: "reveiwId has not received"})
-        }
-
-        const getAlllikes = await client.review.findUnique({
-            where: {
-                id: reviewId
-            }, 
-            select: {
-                like: true
-            }
-        })
-
-        res.status(200).json(getAlllikes.like, {message: 'all likes has been received successfully'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-
-// get all the like for the particular reply 
-export const getlikes = async(req, res) => {
-
-    try{
-
-        const { replyId } = req.params
-
-        if(!replyId){
-            res.status(400).json({message: 'replyId has not been received'})
-        }
-
-        const getlikesR = await client.reply.findUnique({
-            where: {
-                id: replyId
-            }, 
-            select: {
-                like: true
-            }
-        })
-
-        res.status(200).json(getlikesR.like, {message: 'all likes are received successfully!'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-export const addreplylike = async(req, res) => {
-
-    try{
-
-        const userId  = req.user.id; 
-        const { replyId } = req.params; 
-
-        if(!userId || !replyId){
-            res.status(400).json({message: 'userId and replyId have not received'})
-        }
-
-        const {islike} = req.body;
-        
-        if(typeof(islike) !== 'boolean'){
-            res.status(400).json({message: 'islike should be boolean'})
-        }
-
-        const addreplylike = await client.like.create({
-            data: {
-                islike, 
-                user:{
-                    connect: {
-                        id: userId
-                    }
-                }, 
-                reply: {
-                    connect: {
-                        id: replyId
-                    }
-                }
-            }
-        })
-
-        res.status(201).json({message: 'the new like has been added successfully'})
-
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-export const removereplyLike = async(req, res) => {
-
-    try{
-
-        const userId = req.user.id; 
-        const { replyId, likeId } = req.params
-
-        if(!userId || !replyId || !likeId){
-            res.status(400).json({message: 'userId and replyId and likeId have not been received'})
-        }
-
-        const removeReplylike = await client.reply.delete({
-            where: {
-                userId: userId, 
-                replyId: replyId, 
-                id: likeId
-            }
-        })
-
-        if(!removeReplylike){
-            res.status(400).json({message: 'like has not been removed '})
-        }
-        
-        res.status(200).json({message: 'like has been removed successfully!'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-export const updatereplylike = async(req, res) => {
-
-    try{
-
-        const userId = req.user.id; 
-        const {replyId , likeId } = req.params; 
-        
-        if(!userId || !replyId || !likeId ){
-            res.status(400).json({message: 'userId and replyId and likeId have not been received'})
-        }
-
-        const { islike } = req.body; 
-
-        if(typeof(islike) !== 'boolean'){
-            res.status(400).json({message: 'islike field should boolean'})
-        }
-
-        const updateReplylike = await client.like.update({
-            where: {
-                userId: userId, 
-                replyId: replyId,
-                id: likeId
-            }, 
-            data: {
-                islike
-            }
-        })
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
 export const getAdminReviews = async(req, res) => {
 
     try{
 
+        const adminId = req.admin.id; 
         const { productId } = req.params;
         
-        if( !productId ){
+        if( !productId || !adminId ){
             res.status(400).json({message: 'productId have not been received'})
         }
 
         const getallreviews = await client.product.findMany({
             where: {
-                id: productId
-            }, 
-            select: {
-                review: true
+                id: productId, 
+                adminId: adminId
             }
         })
 
