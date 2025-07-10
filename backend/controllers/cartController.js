@@ -128,15 +128,16 @@ export const addItems = async(req, res) => {
             res.status(400).json({message: 'cart not found'})
         }
 
-        const { quantity, productId } = req.body;
+        const { quantity, productId, price } = req.body;
         
-        if(!quantity || !productId ){
+        if(!quantity || !productId || !price){
             res.status(400).json({message: 'quantity and productId are required to fill first'})
         }
         
         const addItems = await client.cartItems.create({
             data: {
-                quantity, 
+                quantity,
+                price, 
                 product: {
                     connect: {
                         id: productId
@@ -164,9 +165,9 @@ export const updateItems = async(req, res) => {
     try{
 
         const userId = req.user.id; 
-        const { productId } = req.params; 
+        const { itemsId } = req.params; 
 
-        if(!userId || !productId){
+        if(!userId || !itemsId ){
             res.status(400).json({message: 'userId and cartId and productId are not found'})
         }
 
@@ -184,7 +185,8 @@ export const updateItems = async(req, res) => {
         
         const updateItems = await client.cartItems.update({
             where: {
-                cartId: cart.id
+                cartId: cart.id, 
+                id: itemsId
             }, 
             data: {
                 quantity
@@ -204,9 +206,9 @@ export const deleteItems = async(req, res) => {
     try{
 
         const userId = req.user.id; 
-        const { productId } = req.params; 
+        const { itemsId } = req.params; 
 
-        if(!userId || !productId){
+        if(!userId || !itemsId){
             res.status(400).json({message: 'userId and productId have not received'})
         }
 
@@ -223,7 +225,7 @@ export const deleteItems = async(req, res) => {
         const deleteItems = await client.cartItems.delete({
             where: {
                 cartId: cart.id,
-                productId: productId
+                id: itemsId
             }
         })
 
