@@ -22,9 +22,9 @@ export const payment = async(req, res) => {
             where: {
                 userId: userId
             }, 
-            include: {
-                items
-            }
+            // include: {
+            //     items
+            // }
         })
 
         var cartItemsSum; 

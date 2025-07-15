@@ -4,7 +4,7 @@ import { getparticularPayment, getpayment, payment } from "../controllers/paymen
 const router = Router(); 
 
 
-router.post('/users/checkout/payment/', userAuth, payment ); 
+router.post('/users/checkout/payment', userAuth, payment ); 
 router.get('/users/checkout/payment/:paymentId', userAuth, getparticularPayment)
 router.get('/users/checkout/payment', userAuth, getpayment)
 
