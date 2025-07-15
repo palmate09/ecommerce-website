@@ -128,16 +128,25 @@ export const addItems = async(req, res) => {
             res.status(400).json({message: 'cart not found'})
         }
 
-        const { quantity, productId, price } = req.body;
+        const { quantity, productId } = req.body;
         
-        if(!quantity || !productId || !price){
+        if(!quantity || !productId){
             res.status(400).json({message: 'quantity and productId are required to fill first'})
         }
+
+        const product = await client.product.findUnique({
+            where: {
+                id: productId
+            }, 
+            select: {
+                price: true
+            }
+        })
         
         const addItems = await client.cartItems.create({
             data: {
                 quantity,
-                price, 
+                price: product.price, 
                 product: {
                     connect: {
                         id: productId

@@ -7,14 +7,15 @@ export const getParticularOrder = async(req, res) => {
 
         const userId = req.user.id; 
         const { orderId } = req.params;
-        
+
+
         if(!userId || !orderId){
             res.status(400).json({message: 'userId and orderId have not found'})
         }
 
         const getOrder = await client.order.findUnique({
             where: {
-                userId: user.id, 
+                userId: userId, 
                 id: orderId
             }
         })
@@ -110,56 +111,6 @@ export const deleteOrder = async(req, res) => {
     }
 }
 
-// get all the orders for the admin 
-export const getAdminOrders = async(req,res) => {
-
-    try{    
-
-        const adminId = req.admin.id; 
-
-        if(!adminId){
-            res.status(400).json({message: 'adminId not found'})
-        }
-
-        const order = await client.order.findMany({
-            where: {
-                adminId: adminId
-            }
-        })
-
-        res.status(200).json({ order, message: 'order details received'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
-// get the specific orders for the admin 
-export const getAdminOrder = async(req, res) => {
-
-    try{
-
-        const adminId = req.admin.id;
-        const { orderId } = req.params 
-
-        if(!adminId || !orderId){
-            res.status(400).json({message: 'adminId or orderId not found'})
-        }
-
-        const order = await client.order.findUnique({
-            where: {
-                adminId: adminId, 
-                id: orderId
-            }
-        })
-
-        res.status(200).json({ order, message: 'order has been received'})
-    }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
-    }
-}
-
 // update the specific order status for the admin
 export const updateOrderStatus = async(req, res) => {
 
@@ -189,6 +140,19 @@ export const updateOrderStatus = async(req, res) => {
         })
 
         res.status(200).json({message: 'order status has been successfully updated'})
+    }
+    catch(e){
+        res.status(500).json({error: e.message, message: 'Internal server Error'})
+    }
+}
+
+// give the all the orderdetails to the particular products admin after the payment is done 
+
+export const orderdetailsAdmin = async(req, res) => {
+
+    try{
+
+        
     }
     catch(e){
         res.status(500).json({error: e.message, message: 'Internal server Error'})
