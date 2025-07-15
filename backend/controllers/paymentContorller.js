@@ -18,31 +18,34 @@ export const payment = async(req, res) => {
             res.status(400).json({message: 'userId not found '})
         }
 
-        const Cart = await client.cart.findUnique({
+        const Cart = await client.cart.findFirst({
             where: {
                 userId: userId
             }, 
-            // include: {
-            //     items
-            // }
+            select: {
+                items: true, 
+                id: true
+            }
         })
 
-        var cartItemsSum; 
-        if(Cart){
-
-            cartItemsSum = await client.cartItems.aggregate({
-                where: {
-                    cartId: Cart.id
-                }, 
-                _sum: {
-                    price: true
-                }
-            })
-
+        if(!Cart){
+            res.status(400).json({message: 'Cart not found'})
         }
-        else{
-            res.status(400).json({message: 'cart not found'})
+
+        const CartItems = await client.cartItems.findMany({
+            where: {
+                cartId: Cart.id
+            }
+        })
+
+        if(!CartItems.length){
+            res.status(400).json({message: 'No items in cart'})
         }
+
+        const totalAmount = CartItems.reduce((sum, item) => {
+            return sum + (item.price * item.quantity)
+        }, 0)
+
 
         const { status } = req.body; 
 
@@ -53,7 +56,7 @@ export const payment = async(req, res) => {
         const paymentDetails = await client.payment.create({
             data: {
                 status: status,
-                amount: cartItemsSum._sum, 
+                amount:   totalAmount, 
                 user: {
                     connect: {
                         id: userId
@@ -62,77 +65,57 @@ export const payment = async(req, res) => {
             }
         })
 
-        var newOrder; 
-         
-        if(paymentDetails.status === 'PAID'){
+        let newOrder; 
+        
+        const orderStatus = status === 'PAID' ? 'PLACED': 'CANCELLED'; 
 
-            newOrder = await client.order.create({
-                data: {
-                    orderstatus: 'PLACED',
-                    total: paymentDetails.amount, 
-                    user: {
-                        connect: {
-                            id: userId
-                        }
-                    }, 
-                    payment: {
-                        connect: {
-                            id: paymentDetails.id
-                        }
+        newOrder = await client.order.create({
+            data: {
+                orderstatus: orderStatus, 
+                total: paymentDetails.amount, 
+                user: {
+                    connect: {
+                        id: userId
+                    }
+                }, 
+                payment: {
+                    connect: {
+                        id: paymentDetails.id
                     }
                 }
-            })
-        }
-
-        else if (paymentDetails.status === 'FAILED'){
-
-            newOrder = await client.order.create({
-                data: {
-                    orderstatus: 'CANCELLED', 
-                    total: paymentDetails.amount, 
-                    user: {
-                        connect: {
-                            id: userId
-                        }
-                    }, 
-                    payment: {
-                        connect: {
-                            id: paymentDetails.id
-                        }
-                    }
-                }
-            })
-        } 
-
+            }
+        })
 
         // move the cartitems to orderitems and delete the cart
 
-        const cartItems = await client.cartItems.findUnique({
+        if(newOrder){
+
+            await client.orderItems.createMany({
+                data: CartItems.map(item => ({
+                    productId: item.productId,
+                    orderId: newOrder.id, 
+                    quantity: item.quantity, 
+                    price: item.price
+                }))
+            })
+        }
+
+
+        await client.cartItems.deleteMany({
             where: {
                 cartId: Cart.id
             }
         })
 
-        if(newOrder){
-
-            await client.orderItems.create({
-                data: {
-                    productId: cartItems.productId, 
-                    orderId: newOrder.id,
-                    quantity: cartItems.quantity, 
-                    price: cartItems.price
-                }
-            })
-
-            const delteCart = await client.cart.delete({
-                where: {
-                    id: Cart.id
-                }
-            })
-
-            if(!delteCart){
-                res.status(400).json({message: 'the cart has not deleted!'})
+        const delteCart = await client.cart.delete({
+            where: {
+                id: Cart.id 
             }
+        })
+
+
+        if(!delteCart){
+            res.status(400).json({message: 'the cart has not deleted!'})
         }
     
         res.status(200).json({newOrder, paymentDetails, message: 'successfully done the payment and order details have been stored'})
@@ -169,28 +152,27 @@ export const getparticularPayment = async(req, res) =>{
 }
 
 // get all the payment details 
-export const getpayment = async(req, res) => {
-    try{
+export const GetAllPayments = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-        const userId = req.user.id; 
-
-        if(!userId){
-            res.status(400).json({message: 'userId not found '})
-        }
-
-        const getPayment = await client.payment.findMany({
-            where: {
-                userId: userId
-            }
-        })
-
-        if(!getPayment){
-            res.status(400).json({message: 'the payment details have not received'})
-        }
-
-        res.status(200).json({getPayment, message: 'payment details have been generated'})
+    if (!userId) {
+      return res.status(400).json({ message: 'userId not found' });
     }
-    catch(e){
-        res.status(500).json({error: e.message, message: 'Internal server Error'})
+
+    const getPayment = await client.payment.findMany({
+      where: {
+        userId: userId
+      }
+    });
+
+    if (getPayment.length === 0) {
+      return res.status(404).json({ message: 'No payment records found for this user' });
     }
-}  
+
+    return res.status(200).json({ getPayment, message: 'Payment details retrieved successfully' });
+
+  } catch (e) {
+    return res.status(500).json({ error: e.message, message: 'Internal Server Error' });
+  }
+}
