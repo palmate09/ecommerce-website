@@ -82,8 +82,16 @@ frontend/
 | `/signup` | Sign up |
 
 ## Screenshots
-<img width="1889" height="958" alt="Screenshot from 2026-05-27 01-59-03" src="https://github.com/user-attachments/assets/d5a2676f-63c2-44fb-a452-73a238ee2eae" />
+<img width="1881" height="1079" alt="image" src="https://github.com/user-attachments/assets/d9254c73-db70-480e-99d1-7a9cbd97db6e" />
+<img width="1910" height="1075" alt="image" src="https://github.com/user-attachments/assets/c7fd17ab-f5a7-40a9-8e1c-ddb27a0dc627" />
 <img width="1705" height="943" alt="Screenshot from 2026-05-27 02-00-02" src="https://github.com/user-attachments/assets/4b528f52-fbdb-42d2-b6c1-5b685ffb51e3" />
+<img width="1906" height="1079" alt="image" src="https://github.com/user-attachments/assets/4bb2c7ee-a5e3-415b-9fb4-078cdf2b9c18" />
+<img width="1875" height="1073" alt="image" src="https://github.com/user-attachments/assets/8bfb69c1-0f3e-49f1-83ce-4afa0a81bea2" />
+<img width="1921" height="842" alt="image" src="https://github.com/user-attachments/assets/9368faed-7b78-4d05-8037-14d3aa8e2b59" />
+<img width="1906" height="862" alt="image" src="https://github.com/user-attachments/assets/40b35697-6376-45fe-8bd9-0b1f56c34724" />
+<img width="1904" height="567" alt="image" src="https://github.com/user-attachments/assets/fe29e0dc-3d9f-484c-b7d7-3c3643371440" />
+
+
 
 
 
