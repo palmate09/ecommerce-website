@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# BloomShop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern e-commerce frontend for sneaker retail, built with **React 19**, **TypeScript**, **Vite**, and **Tailwind CSS v4**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Product Catalog** — Browse a grid of sneaker products with hover animations and quick-actions
+- **Product Details** — View images, ratings, descriptions, quantity selector, and related products
+- **Shopping Cart** — Full cart with add/remove/clear, quantity controls, persistent state via `localStorage`, and order summary (subtotal, shipping, tax, total)
+- **Dark / Light Mode** — Theme toggle with system preference detection and persistent storage
+- **Authentication UI** — Sign in and sign up forms with password visibility toggle
+- **Contact Page** — Contact form with service highlights and FAQ section
+- **Responsive Design** — Mobile-first layout with Tailwind CSS
+- **Newsletter Subscription** — Email input in footer (UI only)
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer | Technology |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build | Vite 8 |
+| Routing | React Router DOM 7 |
+| Styling | Tailwind CSS v4, clsx, tailwind-merge |
+| Icons | lucide-react, @tabler/icons-react |
+| State | React Context + useReducer |
+| Linting | ESLint + Prettier |
+| Package Manager | pnpm |
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+pnpm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Start dev server (with HMR)
+pnpm dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Type-check and build for production
+pnpm build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Preview the production build
+pnpm preview
+
+# Lint source files
+pnpm lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Project Structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+frontend/
+├── public/             # Static assets
+├── src/
+│   ├── assets/         # Images (hero, app store badges, etc.)
+│   ├── components/     # Reusable UI components
+│   │   └── ui/         # Primitives (Input, Loader, ThemeToggle)
+│   ├── context/        # React Context providers (Cart, Theme)
+│   ├── data/           # Mock data (products, contact info)
+│   ├── layouts/        # Layout components (Navbar, Footer)
+│   ├── pages/          # Route page components (6 pages)
+│   ├── reducers/       # Reducer functions (cartReducer)
+│   ├── utils/          # Utility functions (cn)
+│   ├── App.tsx         # Root component with routes
+│   ├── global.css      # Global styles + Tailwind
+│   └── main.tsx        # Entry point
+├── index.html
+├── package.json
+├── vite.config.ts
+├── tsconfig*.json
+└── eslint.config.js
+```
+
+## Routes
+
+| Route | Page |
+|---|---|
+| `/` | Landing / product catalog |
+| `/product/:id` | Product detail page |
+| `/cart` | Shopping cart |
+| `/contact` | Contact form |
+| `/signin` | Sign in |
+| `/signup` | Sign up |
+
+## Notes
+
+- This is a **client-side only** application using mock data — no backend or API integration
+- Cart and theme preferences are persisted in `localStorage`
+- Search and contact form submission are UI-only (not wired to a backend)
