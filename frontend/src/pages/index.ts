@@ -1,0 +1,6 @@
+export { LandingPage } from "@/pages/LandingPage"
+export { ProductPage } from "@/pages/ProductPage"
+export { ContactPage } from "@/pages/ContactPage"
+export { CartPage } from "@/pages/CartPage"
+export { SignInPage } from "@/pages/SignInPage"
+export { SignUpPage } from "@/pages/SignUpPage"
