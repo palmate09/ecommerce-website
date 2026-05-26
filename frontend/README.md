@@ -81,6 +81,16 @@ frontend/
 | `/signin` | Sign in |
 | `/signup` | Sign up |
 
+## Screenshots
+<img width="1889" height="958" alt="Screenshot from 2026-05-27 01-59-03" src="https://github.com/user-attachments/assets/d5a2676f-63c2-44fb-a452-73a238ee2eae" />
+<img width="1705" height="943" alt="Screenshot from 2026-05-27 02-00-02" src="https://github.com/user-attachments/assets/4b528f52-fbdb-42d2-b6c1-5b685ffb51e3" />
+
+
+
+
+
+
+
 ## Notes
 
 - This is a **client-side only** application using mock data — no backend or API integration
