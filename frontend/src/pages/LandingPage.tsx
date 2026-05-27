@@ -4,6 +4,7 @@ import { Navbar } from "@/layouts/Navbar";
 import { cn } from "@/utils/cn";
 import { products } from "@/data/products";
 import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 interface LandingPageType {
     className?: string;
@@ -13,9 +14,9 @@ export function LandingPage({className}: LandingPageType) {
     
     const navigate = useNavigate(); 
     
-    function handleclick (id: number) {
+    const handleclick= useCallback((id: number) => {
         navigate(`/product/${id}`); 
-    }
+    }, [])
 
     return (
         <section className={cn("min-h-screen w-full bg-neutral-50 dark:bg-neutral-900", className)}>

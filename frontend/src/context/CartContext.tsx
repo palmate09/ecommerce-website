@@ -1,5 +1,5 @@
 import { cartReducer } from "@/reducers/cartReducer"
-import { createContext, useContext, useEffect, useReducer, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from "react"
 
 
 interface cartItem {
@@ -13,8 +13,8 @@ interface cartItem {
 interface CartContextType {
     cart: cartItem[]
     dispatch: React.Dispatch<any>
-    totalCount: number
-    totalPrice: number
+    totalCountMemoised: number
+    totalPriceMemoised: number
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -30,8 +30,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0)
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
+    const totalCountMemoised = useMemo(() =>{
+        return totalCount
+    }, [totalCount])
+
+    const totalPriceMemoised = useMemo(() => {
+        return totalPrice
+    }, [totalPrice])
+
     return (
-        <CartContext.Provider value={{cart, dispatch, totalCount, totalPrice}}>
+        <CartContext.Provider value={{cart, dispatch, totalCountMemoised, totalPriceMemoised}}>
             {children}
         </CartContext.Provider>
     )

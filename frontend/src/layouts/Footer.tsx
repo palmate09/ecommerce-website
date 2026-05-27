@@ -3,6 +3,7 @@ import { cn } from "@/utils/cn"
 import appstoreIcon from "@/assets/apple_logo.png"
 import googleplayIcon from "@/assets/google_play.png"
 import { Link } from "react-router-dom"
+import { memo } from "react"
 
 interface exportType {
     className?: string
@@ -21,6 +22,7 @@ interface socialIcon {
 }
 
 interface items {
+    id:number
     label: string 
     path: string
 }
@@ -47,9 +49,9 @@ interface storeButton {
     alt: string
 }
 
-export function Footer(
+export const Footer = memo((
     {className}: exportType 
-) {
+) => {
 
     const infoItems: infoItem[] = [
         {
@@ -102,10 +104,10 @@ export function Footer(
             path: "/", 
             label: "shop", 
             item: [
-                {label: "All Products", path: "/"},
-                {label: "new arrivals", path: "/"}, 
-                {label: "sale", path: "/"},
-                {label: "Featured", path: "/"}
+                {id:1, label: "All Products", path: "/"},
+                {id:2, label: "new arrivals", path: "/"}, 
+                {id:3, label: "sale", path: "/"},
+                {id:4, label: "Featured", path: "/"}
             ]
         }, 
 
@@ -114,10 +116,10 @@ export function Footer(
             path: "/", 
             label: "customer care", 
             item: [
-                {label: "New Arrivals", path: "/"},
-                {label: "help center", path: "/"},
-                {label: "shipping info", path: "/"},
-                {label: "returns & exchanges", path: "/"}
+                {id:1, label: "New Arrivals", path: "/"},
+                {id:2, label: "help center", path: "/"},
+                {id:3, label: "shipping info", path: "/"},
+                {id:4, label: "returns & exchanges", path: "/"}
             ]
         }, 
 
@@ -126,10 +128,10 @@ export function Footer(
             path: "/", 
             label: "company", 
             item: [
-                {label: "About Us", path: "/"},
-                {label: "Carrers", path: "/"},
-                {label: "Blog", path: "/"},
-                {label: "Press", path: "/"}
+                {id:1, label: "About Us", path: "/"},
+                {id:2, label: "Carrers", path: "/"},
+                {id:3, label: "Blog", path: "/"},
+                {id:4, label: "Press", path: "/"}
             ]
         },
 
@@ -138,10 +140,10 @@ export function Footer(
             path: "/", 
             label: "legal", 
             item: [
-                {label: "Privacy Policy", path: "/"},
-                {label: "Terms & conditions", path: "/"},
-                {label: "cookie policy", path: "/"},
-                {label: "accessibility", path: "/"}
+                {id:1, label: "Privacy Policy", path: "/"},
+                {id:2, label: "Terms & conditions", path: "/"},
+                {id:3, label: "cookie policy", path: "/"},
+                {id:4, label: "accessibility", path: "/"}
             ]
         }
     ]
@@ -253,7 +255,7 @@ export function Footer(
                                         const itemLabel = item.label; 
 
                                         return (
-                                            <a href={item.path} className="flex text-[12px] text-neutral-500 font-finlandica capitalize cursor-pointer dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white">{itemLabel}</a>
+                                            <a key={item.id} href={item.path} className="flex text-[12px] text-neutral-500 font-finlandica capitalize cursor-pointer dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white">{itemLabel}</a>
                                         )
                                     })}
                                 </div>
@@ -312,4 +314,4 @@ export function Footer(
         </footer>
     )
 
-}
+})

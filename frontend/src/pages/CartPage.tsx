@@ -25,10 +25,10 @@ interface Feature {
 export function CartPage ({className}: exportType
 ) {
 
-    const { cart, dispatch, totalCount, totalPrice } = useCart()
+    const { cart, dispatch, totalCountMemoised, totalPriceMemoised } = useCart()
     const navigate = useNavigate()
 
-    const tax = totalPrice * 0.08
+    const tax = totalPriceMemoised * 0.08
 
     const orderSummaryPoints : orderSummaryPoint[] = [
         {
@@ -96,7 +96,7 @@ export function CartPage ({className}: exportType
                     <div className="flex items-center justify-between">
                         <div className="gap-3 flex flex-col items-start">
                             <h1 className="text-2xl md:text-3xl font-finlandica font-bold dark:text-white">Shopping Cart</h1>
-                            <p className="text-sm font-finlandica font-medium text-neutral-500 dark:text-neutral-400">{totalCount} {totalCount === 1 ? "item" : "items"} in your cart</p>
+                            <p className="text-sm font-finlandica font-medium text-neutral-500 dark:text-neutral-400">{totalCountMemoised} {totalCountMemoised === 1 ? "item" : "items"} in your cart</p>
                         </div>
                         <Link to={"/"} className="flex gap-2 items-center text-sm text-neutral-500 dark:text-neutral-400 font-finlandica font-medium">
                             <ArrowLeft size={16} />
@@ -162,8 +162,8 @@ export function CartPage ({className}: exportType
                             <h1 className="text-base md:text-lg font-semibold font-finlandica text-neutral-900 dark:text-white">Order Summary</h1>
 
                             <div className="flex items-center justify-between text-sm mt-3 text-neutral-400 dark:text-neutral-500 font-medium">
-                                <h1>Subtotal ({totalCount} items)</h1>
-                                <p className="text-neutral-900 dark:text-white">${totalPrice.toFixed(2)}</p>
+                                <h1>Subtotal ({totalCountMemoised} items)</h1>
+                                <p className="text-neutral-900 dark:text-white">${totalPriceMemoised.toFixed(2)}</p>
                             </div>
 
                             <div className="flex items-center justify-between text-sm mt-3 text-neutral-400 dark:text-neutral-500 font-medium">
@@ -180,7 +180,7 @@ export function CartPage ({className}: exportType
 
                             <div className="flex items-center justify-between text-sm mt-5 text-neutral-400 dark:text-neutral-500 font-medium mb-5">
                                 <h1 className="text-base font-semibold text-neutral-900 dark:text-white font-finlandica">Total</h1>
-                                <p className="font-bold text-base text-amber-500">${(totalPrice + tax).toFixed(2)}</p>
+                                <p className="font-bold text-base text-amber-500">${(totalPriceMemoised + tax).toFixed(2)}</p>
                             </div>
 
                             <button className="w-full rounded-full bg-amber-500 flex items-center justify-center py-2 text-sm md:text-base font-medium gap-2 cursor-pointer hover:bg-amber-500/95">

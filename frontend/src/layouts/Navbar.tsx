@@ -5,17 +5,18 @@ import { Input } from "@/components/ui/Input";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { ThemeToggle } from "@/components/ui";
+import { memo } from "react";
 
 interface NavbarType {
     className?: string; 
 }
 
-export function Navbar (
+export const Navbar = memo((
     {className}: NavbarType
-) {
+) => {
 
     const navigate = useNavigate(); 
-    const { totalCount } = useCart(); 
+    const { totalCountMemoised } = useCart(); 
 
     function handleclick () {
         navigate('/'); 
@@ -60,9 +61,9 @@ export function Navbar (
 
                     <Link to={"/cart"} className="flex items-center justify-center dark:hover:bg-neutral-900 hover:bg-gray-100 p-2 rounded-full transition-all duration-300 cursor-pointer">
                         <ShoppingCart size={18} className="dark:text-neutral-50"/>
-                        {totalCount > 0 && (
+                        {totalCountMemoised > 0 && (
                             <span className="relative -top-2 bg-amber-500 px-1 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
-                                {totalCount > 99 ? "99+" : totalCount}
+                                {totalCountMemoised > 99 ? "99+" : totalCountMemoised}
                             </span>
                         )}
                     </Link>
@@ -72,4 +73,4 @@ export function Navbar (
             </div>
         </nav>
     )
-}
+})

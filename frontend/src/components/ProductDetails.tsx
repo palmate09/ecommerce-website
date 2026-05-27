@@ -1,11 +1,22 @@
-
 import { useCart } from "@/context/CartContext"
 import { cn } from "@/utils/cn"
 import { IconCheck, IconMinus, IconPlus } from "@tabler/icons-react"
 import { HeartIcon, Loader, Share2, StarIcon } from "lucide-react"
-import { useState, type JSX } from "react"
+import { Fragment, memo, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { product, buttonType } from "@/data/products"
+
+const Ratings = memo(function Ratings({ rating }: { rating: number }) {
+    if (rating <= 0) return null;
+
+    return (
+        <>
+            {Array.from({ length: Math.floor(rating) }, (_, i) => (
+                <StarIcon key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
+            ))}
+        </>
+    );
+});
 
 export function ProductDetails ({
     product,
@@ -36,18 +47,6 @@ export function ProductDetails ({
         }
     ]
 
-    function Ratings (rating: number): JSX.Element[] | null {
-        if(rating <= 0){
-            return null;
-        }
-
-        const starCount = Math.floor(rating);
-
-        return Array.from({length: starCount}, (_, i, ) => (
-            <StarIcon key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
-        ))
-    }
-
     function handleclickplus () {
         setCount((prev) => prev + 1)
     }
@@ -56,27 +55,28 @@ export function ProductDetails ({
         setCount((prev) => (prev > 1 ? prev - 1 : 1));
     }
 
-    function handleclick () {
-        setIsAdding(true);
 
-        for(let i = 0; i< count; i++){
+    const handleclick = useCallback(() => {
+        setIsAdding(true); 
+
+        for(let i = 0; i<count; i++){
             dispatch({
-                type: "ADD_ITEM",
+                type: "ADD_ITEM", 
                 payload: { id: product.id, title: product.name, price: product.price, image: product.image.src}
             })
         }
 
         setTimeout(() => {
-            setIsAdding(false);
-            setIsAdded(true);
+            setIsAdding(false); 
+            setIsAdded(true)
         }, 500)
 
         setTimeout(() => {
-            setIsAdded(false);
+            setIsAdded(false); 
         }, 1500)
-    }
+    }, [count, dispatch, product])
 
-    function handleBuyNow () {
+    const handleBuyNow =  useCallback(() => {
         setIsAdding(true);
 
         for(let i = 0; i< count; i++){
@@ -95,11 +95,11 @@ export function ProductDetails ({
             setIsAdded(false);
             navigate("/cart");
         }, 1500)
-    }
+    }, [count, dispatch, product])
 
-    function handleclickwishlist() {
+    const handleclickwishlist= useCallback(() =>  {
         setIsClick((prev) => !prev)
-    }
+    }, [])
 
 
     return (
@@ -126,7 +126,7 @@ export function ProductDetails ({
 
                     <div className="flex gap-2 items-center">
                         <div className="flex space-x-1 items-center">
-                            {Ratings(product.rating)}
+                            <Ratings rating={product.rating} />
                         </div>
 
                         <div className="text-neutral-500 dark:text-neutral-400 text-sm">
@@ -215,7 +215,7 @@ export function ProductDetails ({
                                 const Icon = item.Icon;
 
                                 return (
-                                    <>
+                                    <Fragment key={item.id}>
                                     {(item.label).toLowerCase() === ("add to wishlist").toLowerCase() ?
                                         <button
                                             className={cn("hover:bg-amber-100/50 rounded-full py-1 px-3 flex gap-3 items-center text-[11px] font-semibold font-finlandica text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300", isClick ? "hover:text-neutral-900 text-red-500": "")}
@@ -239,7 +239,7 @@ export function ProductDetails ({
                                             {item.label}
                                         </button>
                                     }
-                                    </>
+                                    </Fragment>
                                 )
                             })}
                         </div>

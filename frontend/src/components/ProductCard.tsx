@@ -1,5 +1,6 @@
 import { useCart } from "@/context/CartContext";
 import { Heart, Eye, ShoppingCart } from "lucide-react";
+import { memo } from "react";
 
 interface productType {
     id: number, 
@@ -9,13 +10,13 @@ interface productType {
     onclick: (id: number) => void 
 }
 
-export function ProductCard({
+export const ProductCard = memo(({
     id, 
     title,
     price,
     image, 
     onclick
-}:productType) {
+}:productType) => {
 
     const { dispatch } = useCart()
 
@@ -163,4 +164,4 @@ export function ProductCard({
 
         </div>
     );
-}
+})
