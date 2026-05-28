@@ -22,12 +22,12 @@ export function LandingPage({className}: LandingPageType) {
         <section className={cn("min-h-screen w-full bg-neutral-50 dark:bg-neutral-900", className)}>
             <Navbar className="z-10"/>
 
-            <section className="flex-1 max-w-7xl mx-auto px-5 mb-15">
-                <div className="mt-10 mb-10 max-w-lg mx-auto px-10 pt-5 flex items-center flex-col gap-2 text-center">
-                    <h1 className="font-finlandica text-4xl font-semibold text-amber-500 tracking-tight">
+            <section className="flex-1 max-w-360 mx-auto px-5 mb-15">
+                <div className="mt-10 mb-10 max-w-xl mx-auto px-10 pt-5 flex items-center flex-col gap-2 text-center">
+                    <h1 className="font-finlandica text-5xl font-semibold text-amber-500 tracking-tight">
                         Step Into Style
                     </h1>
-                    <p className="text-sm text-neutral-700 dark:text-neutral-300">
+                    <p className="text-xl text-neutral-700 dark:text-neutral-300">
                         Discover our latest collection of premium sneakers
                         <br />
                         — comfort, design, and performance in every pair.
