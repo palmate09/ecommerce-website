@@ -89,14 +89,14 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
         >
           <div
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-zinc-900/80 backdrop-blur-xl transition-opacity"
+            className="fixed inset-0 bg-zinc-900/80 backdrop-blur-xl transition-opacity dark:bg-zinc-900/10 dark:backdrop-blur-md"
           />
 
-          <div className="relative mx-auto flex w-full max-w-2xl transform flex-col rounded-xl bg-neutral-50/90 shadow-md transition-all h-200 dark:bg-zinc-900">
+          <div className="relative mx-auto flex w-full max-w-2xl transform flex-col rounded-xl bg-neutral-50/90 shadow-md transition-all h-150 dark:bg-zinc-900">
             <div className="sticky inset-0 z-50 flex w-full items-center rounded-t-xl border-b border-neutral-400/40 px-2 py-5">
               <IconSearch
                 stroke={2}
-                size={25}
+                size={20}
                 className="mx-2 text-neutral-600 dark:text-neutral-200"
               />
 
@@ -106,27 +106,27 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 type="text"
-                className="w-full bg-transparent pl-2 font-finlandica text-xl leading-none outline-none dark:text-white"
+                className="w-full bg-transparent pl-2 font-finlandica text-sm leading-none outline-none dark:text-white"
                 placeholder="Search pages, products, cart items..."
               />
 
-              <kbd className="text-nuetral-500 mx-4 flex rounded-sm bg-blue-100/40 px-2 py-2.5 text-center font-finlandica text-sm leading-2 font-semibold text-neutral-600 ring-2 ring-neutral-400 dark:text-neutral-200 dark:bg-neutral-700 dark:ring-neutral-600">
+              <kbd className="text-nuetral-500 mx-4 flex rounded-sm bg-blue-100/40 px-2 py-2.5 text-center font-finlandica text-xs leading-2 font-semibold text-neutral-600 ring-2 ring-neutral-400 dark:text-neutral-200 dark:bg-neutral-700 dark:ring-neutral-600">
                 ESC
               </kbd>
             </div>
 
-            <div className="custom-scrollbar flex flex-col gap-4 overflow-y-auto">
+            <div className="custom-scrollbar flex flex-col overflow-y-auto">
               {filteredSearch.map((item) => {
                 return (
                   <div
                     key={item.id}
-                    className="flex flex-col px-5 py-5 outline-none"
+                    className="flex flex-col px-5 py-4 outline-none"
                   >
-                    <h1 className="font-finlandica font-bold tracking-widest text-neutral-600 uppercase dark:text-neutral-200">
+                    <h1 className="font-finlandica font-semibold tracking-widest text-neutral-600 uppercase dark:text-neutral-200 text-xs">
                       {item.label}
                     </h1>
 
-                    <div className="mt-5 flex flex-col gap-5">
+                    <div className="mt-5 flex flex-col gap-3">
                       {item.sectionSearchResult.map((item) => {
                         const idx = currentIndex++; 
                         const Icon = item.Icon;
@@ -139,11 +139,11 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
                             onMouseEnter={() => setSelectedIndex(idx)}
                             ref={el => {if (selectedIndex === idx) el?.scrollIntoView({ block: 'nearest' }); }}
                           >
-                            <div className="flex items-center gap-5 rounded-l-xl">
+                            <div className="flex items-center gap-4 rounded-l-xl">
                               {Icon && (
                                 <Icon
                                     className={`rounded-xl border border-neutral-200 bg-blue-200/20 p-3 text-neutral-500 group-hover:bg-linear-to-br from-amber-300 to-amber-600 group-hover:text-white ${selectedIndex === idx ? "bg-linear-to-br from-amber-300 to-amber-600 text-white" : ""} dark:border-neutral-600 dark:text-neutral-400 `}
-                                  size={52}
+                                  size={40}
                                 />
                               )}
                               {Image && (
@@ -151,10 +151,10 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
                                   src={Image.src}
                                   alt={Image.alt}
                                   className="rounded-xl border border-neutral-200 bg-blue-200/20 object-cover text-neutral-500"
-                                  style={{ width: 52, height: 52 }}
+                                  style={{ width: 40, height: 38 }}
                                 />
                               )}
-                              <h2 className="flex items-center font-finlandica text-xl font-medium capitalize dark:text-white">
+                              <h2 className="flex items-center font-finlandica text-sm font-medium capitalize dark:text-white">
                                 {item.page}
                               </h2>
                             </div>
