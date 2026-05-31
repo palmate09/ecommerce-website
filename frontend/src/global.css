@@ -10,28 +10,31 @@
   --color-primary: oklch(55.5% 0.163 48.998)
 }
 
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+@layer utilities {
+  .custom-scrollbar {
 
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
+    scrollbar-width: thin;
+    scrollbar-color: red, transparent;
 
-  &::-webkit-scrollbar-button {
-    display: none;
-  }
+    &::-webkit-scrollbar {
+      width: none;
+    }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
 
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 9999px;
-  }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.5);
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 9999px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
   }
 }
