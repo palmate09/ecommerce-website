@@ -12,7 +12,7 @@ interface sectionSearchResult {
     Icon?: React.ComponentType<{className?: string, size?: number}>
     Img?: productImage
     page: string
-    description?: string
+    redirect?: string
 }
 
 export const SearchResult: SearchResult[] = [
@@ -23,12 +23,14 @@ export const SearchResult: SearchResult[] = [
             {
                 id: 1, 
                 Icon: IconHome,
-                page: "Home"
+                page: "Home", 
+                redirect: "/"
             }, 
             {
                 id: 2, 
                 Icon: IconPhone, 
-                page: "contact"
+                page: "contact", 
+                redirect: "/contact"
             }
         ]
     },
@@ -40,7 +42,7 @@ export const SearchResult: SearchResult[] = [
             id: product.id,
             Img: product.image, 
             page: product.title,
-            description: product.details
+            redirect: `/product/${product.id}`, 
         }))
     }
 ]
