@@ -1,4 +1,5 @@
 import { useCart } from "@/context/CartContext";
+import { products } from "@/data/products";
 import { cn } from "@/utils/cn";
 import { IconCheck } from "@tabler/icons-react";
 import { Heart, Eye, ShoppingCart, Loader } from "lucide-react";
@@ -22,8 +23,12 @@ export const ProductCard = memo(({
     onclick
 }:productType) => {
 
+    const key = "liked_" + id; 
+
     const { dispatch } = useCart()
-    const [isClick, setIsClick] = useState(false)
+    const [isClick, setIsClick] = useState(() => {
+        return JSON.parse(localStorage.getItem(key) ?? "false"); 
+    })
     const [isAdding, setIsAdding] = useState(false)
     const [isAdded, setIsAdded] = useState(false)
 
@@ -48,8 +53,12 @@ export const ProductCard = memo(({
     const handleclick = useCallback((e:any) => {
         e.preventDefault();
         e.stopPropagation();
-        setIsClick((prev) => !prev); 
-    }, [setIsClick])
+        setIsClick((prev: boolean) => {
+            const next = !prev
+            localStorage.setItem(key, JSON.stringify(next))
+            return next
+        }); 
+    }, [setIsClick, key])
 
     return (
         <div className="rounded-2xl shadow-md overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 dark:bg-neutral-800" onClick={() => onclick(id)}>
@@ -60,10 +69,10 @@ export const ProductCard = memo(({
                 {/* Heart Button */}
                 <button
                     className={cn(
-                        "absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer", isClick ? "bg-red-500" : "")}
+                        "group absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-colors duration-150 cursor-pointer", isClick ? "bg-red-500" : "")}
                     onClick={handleclick}
                 >
-                    <Heart className={cn("w-4 h-4 dark:text-white", isClick ? "bg-red-500 fill-red-500" : "")} />
+                    <Heart className={cn("w-4 h-4 dark:text-white transition-colors duration-150", isClick ? "bg-red-500 fill-red-500 text-white" : " hover:bg-blue-50")} />
                 </button>
 
                 <Link to={"/"} onClick={(e:any) => e.preventDefault()} className="block relative">

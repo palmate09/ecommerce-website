@@ -2,7 +2,7 @@ import { SearchResult } from "@/data/SearchResult";
 import { cn } from "@/utils/cn";
 import { IconSearch } from "@tabler/icons-react";
 import { ArrowRightIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface exportType {
@@ -18,6 +18,7 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0); 
+  const defferedSearhQuery = useDeferredValue(searchQuery); 
 
   const slug = SearchResult.flatMap((item) =>
     item.sectionSearchResult
@@ -28,7 +29,6 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
       })),
   );
 
-  console.log(slug);
 
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
   const filteredSearch = SearchResult.map((section) => ({
     ...section,
     sectionSearchResult: section.sectionSearchResult.filter((item) =>
-      item.page.toLowerCase().includes(searchQuery.toLowerCase()),
+      item.page.toLowerCase().includes(defferedSearhQuery.toLowerCase()),
     ),
   })).filter((section) => section.sectionSearchResult.length > 0);
 
@@ -66,7 +66,7 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
 
   useEffect(() => {
     setSelectedIndex(0); 
-  }, [searchQuery]); 
+  }, [defferedSearhQuery]); 
 
   useEffect(() => {
     if (isOpen) {
@@ -102,7 +102,7 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
 
               <input
                 ref={inputRef}
-                value={searchQuery}
+                value={defferedSearhQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 type="text"
