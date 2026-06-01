@@ -1,5 +1,4 @@
 import { useCart } from "@/context/CartContext";
-import { products } from "@/data/products";
 import { cn } from "@/utils/cn";
 import { IconCheck } from "@tabler/icons-react";
 import { Heart, Eye, ShoppingCart, Loader } from "lucide-react";
