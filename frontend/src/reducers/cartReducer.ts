@@ -1,11 +1,4 @@
-
-interface cartItem {
-    id: number, 
-    title: string, 
-    price: number,
-    image: string,
-    quantity: number
-}
+import type { cartItem } from "@/context/CartContext";
 
 type CartAction = 
     | {

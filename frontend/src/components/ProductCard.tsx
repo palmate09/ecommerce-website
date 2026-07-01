@@ -1,4 +1,5 @@
 import { useCart } from "@/context/CartContext";
+import { useCartActions } from "@/hooks/useCartActions";
 import { cn } from "@/utils/cn";
 import { IconCheck } from "@tabler/icons-react";
 import { Heart, Eye, ShoppingCart, Loader } from "lucide-react";
@@ -24,7 +25,8 @@ export const ProductCard = memo(({
 
     const key = "liked_" + id; 
 
-    const { dispatch } = useCart()
+    // const { dispatch } = useCart()
+    const { addItem } = useCartActions(); 
     const [isClick, setIsClick] = useState(() => {
         return JSON.parse(localStorage.getItem(key) ?? "false"); 
     })
@@ -42,12 +44,12 @@ export const ProductCard = memo(({
 
         setTimeout(() => {
             setIsAdded(false);
-            dispatch({type: "ADD_ITEM", payload: {id, title, price, image}})
+            addItem({id, title, price, image})
         }, 1500)
 
         toast.success("Item added to cart!"); 
 
-    }, [dispatch, setIsAdded, setIsAdding])
+    }, [addItem, setIsAdded, setIsAdding])
 
     const handleclick = useCallback((e:any) => {
         e.preventDefault();

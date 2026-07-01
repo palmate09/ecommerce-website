@@ -72,7 +72,7 @@ export function LandingPage({className}: LandingPageType) {
 
     return (
         <section className={cn("min-h-screen w-full bg-neutral-50 dark:bg-neutral-900", className)}>
-            <Navbar className="z-10"/>
+            <Navbar className="z-50/"/>
 
             <section className="flex-1 max-w-360 mx-auto px-5 mb-15">
                 <div className="mt-10 mb-10 max-w-xl mx-auto px-10 pt-5 flex items-center flex-col gap-2 text-center">

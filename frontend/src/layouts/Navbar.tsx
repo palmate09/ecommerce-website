@@ -1,4 +1,4 @@
-import { IconSearch, IconTallymark3 } from "@tabler/icons-react";
+import { IconSearch, IconTallymark3, IconX } from "@tabler/icons-react";
 import { ShoppingCart } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Input } from "@/components/ui/Input";
@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { ThemeToggle } from "@/components/ui";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Test } from "@/components/Test";
+import { useIsMobile } from "@/hooks";
 
 interface NavbarType {
     className?: string; 
@@ -18,6 +19,7 @@ export const Navbar = memo((
 
     const [isOpen, setIsOpen] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const isMobile = useIsMobile()
     const navigate = useNavigate(); 
     const { totalCountMemoised } = useCart(); 
 
@@ -29,7 +31,7 @@ export const Navbar = memo((
         const handleKeyDown = (e: KeyboardEvent) => {
           if ((e.metaKey || e.ctrlKey) && e.key === "k") {
             e.preventDefault();
-            setIsOpen(true);
+            setIsOpen(prev => !prev);
           }
     
           if (e.key === "Escape") {
@@ -39,12 +41,18 @@ export const Navbar = memo((
     
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        if (!isMobile) {
+            setMobileMenuOpen(false)
+        }
+    }, [isMobile])
 
     return (
         <>
             <Test isOpen={isOpen} onClose={() => setIsOpen(false)}/>
-            <nav className={cn("w-full shadow-md bg-white inset-0 sticky overflow-hidden dark:bg-neutral-900 dark:shadow-2xl dark:shadow-black/20", className)}>
+            <nav className={cn("sticky top-0 z-40 w-full shadow-md bg-white dark:bg-neutral-900 dark:shadow-2xl dark:shadow-black/20", className)}>
                 <div className="container mx-auto px-4 sm:px-6 py-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4 md:gap-8">
                         <button 
@@ -67,16 +75,22 @@ export const Navbar = memo((
                     <div className="text-xs flex items-center tracking-tight gap-3">
 
                         {/* search icon */}
-                        <button className="md:hidden" onClick={() => setIsOpen(true)}>
-                            <IconSearch className="text-neutral-800" size={17} />
-                        </button>
+                        {isMobile && (
+                            <button onClick={() => setIsOpen(true)}>
+                                <IconSearch className="text-neutral-800 dark:text-white" size={17} />
+                            </button>
+                        )}
                         
                         {/* Mobile Menu */}
-                        <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                            <IconTallymark3 
-                                className="rotate-90"
-                            />
-                        </button>
+                        {isMobile && (
+                            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                                {mobileMenuOpen ? (
+                                    <IconX className="dark:text-white" size={20} />
+                                ) : (
+                                    <IconTallymark3 className="rotate-90 dark:text-white" />
+                                )}
+                            </button>
+                        )}
                         
                         <ThemeToggle />
 
@@ -92,6 +106,34 @@ export const Navbar = memo((
                         <Link to="/signup" className="hidden md:block font-finlandica bg-amber-500 px-2 py-1 rounded-full cursor-pointer">Sign Up</Link>
                     </div>
                 </div>
+
+                {isMobile && mobileMenuOpen && (
+                    <div className="border-t border-neutral-200 bg-white px-4 py-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex flex-col gap-3 font-finlandica text-sm">
+                            <Link
+                                to="/contact"
+                                className="rounded-full px-3 py-2 text-neutral-900 hover:bg-amber-100/40 dark:text-white dark:hover:bg-neutral-400/20"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Contact
+                            </Link>
+                            <Link
+                                to="/signin"
+                                className="rounded-full px-3 py-2 text-neutral-900 hover:bg-amber-100/40 dark:text-white dark:hover:bg-neutral-400/20"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Sign In
+                            </Link>
+                            <Link
+                                to="/signup"
+                                className="rounded-full bg-amber-500 px-3 py-2 text-neutral-900"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Sign Up
+                            </Link>
+                        </div>
+                    </div>
+                )}
             </nav>
         </>
         

@@ -3,6 +3,7 @@ import { CartPage, ContactPage, LandingPage, ProductPage, SignInPage, SignUpPage
 import { Toaster } from "react-hot-toast"
 import { IconTimeDuration90 } from "@tabler/icons-react"
 import { Test } from "./components/Test"
+import { Practice } from "./components/Practice"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/practice" element={<Practice />} />
       </Routes>
     </div>
   )

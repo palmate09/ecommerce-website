@@ -1,10 +1,10 @@
-import { useCart } from "@/context/CartContext"
 import { cn } from "@/utils/cn"
 import { IconCheck, IconMinus, IconPlus } from "@tabler/icons-react"
 import { HeartIcon, Loader, Share2, StarIcon } from "lucide-react"
 import { Fragment, memo, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { product, buttonType } from "@/data/products"
+import { useCartActions, useCounter, useToggle } from "@/hooks"
 
 const Ratings = memo(function Ratings({ rating }: { rating: number }) {
     if (rating <= 0) return null;
@@ -26,13 +26,12 @@ export function ProductDetails ({
     className?: string
 }){
 
+    const { addItem } = useCartActions(); 
     const navigate = useNavigate();
-    const [count, setCount] = useState(1);
+    const [count, {increment, decrement, reset}] = useCounter(1);
     const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
-    const [isClick, setIsClick] = useState(false);
 
-    const { dispatch } = useCart();
 
     const buttons : buttonType[] = [
         {
@@ -48,11 +47,11 @@ export function ProductDetails ({
     ]
 
     function handleclickplus () {
-        setCount((prev) => prev + 1)
+        increment(); 
     }
 
     function handleclickminus () {
-        setCount((prev) => (prev > 1 ? prev - 1 : 1));
+        decrement(); 
     }
 
 
@@ -60,10 +59,7 @@ export function ProductDetails ({
         setIsAdding(true); 
 
         for(let i = 0; i<count; i++){
-            dispatch({
-                type: "ADD_ITEM", 
-                payload: { id: product.id, title: product.name, price: product.price, image: product.image.src}
-            })
+            addItem({ id: product.id, title: product.name, price: product.price, image: product.image.src})
         }
 
         setTimeout(() => {
@@ -74,16 +70,13 @@ export function ProductDetails ({
         setTimeout(() => {
             setIsAdded(false); 
         }, 1500)
-    }, [count, dispatch, product])
+    }, [count, addItem, product])
 
     const handleBuyNow =  useCallback(() => {
         setIsAdding(true);
 
         for(let i = 0; i< count; i++){
-            dispatch({
-                type: "ADD_ITEM",
-                payload: { id: product.id, title: product.name, price: product.price, image: product.image.src}
-            })
+            addItem({ id: product.id, title: product.name, price: product.price, image: product.image.src})
         }
 
         setTimeout(() => {
@@ -95,11 +88,13 @@ export function ProductDetails ({
             setIsAdded(false);
             navigate("/cart");
         }, 1500)
-    }, [count, dispatch, product])
+    }, [count, addItem, product])
 
-    const handleclickwishlist= useCallback(() =>  {
-        setIsClick((prev) => !prev)
-    }, [])
+    const [isWishlisted, toggleWishlist] = useToggle(false);
+
+    const handleclickwishlist = useCallback(() => {
+        toggleWishlist();
+    }, [toggleWishlist]);
 
 
     return (
@@ -218,10 +213,10 @@ export function ProductDetails ({
                                     <Fragment key={item.id}>
                                     {(item.label).toLowerCase() === ("add to wishlist").toLowerCase() ?
                                         <button
-                                            className={cn("hover:bg-amber-100/50 rounded-full py-1 px-3 flex gap-3 items-center text-[11px] font-semibold font-finlandica text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300", isClick ? "hover:text-neutral-900 text-red-500": "")}
+                                            className={cn("hover:bg-amber-100/50 rounded-full py-1 px-3 flex gap-3 items-center text-[11px] font-semibold font-finlandica text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300", isWishlisted ? "hover:text-neutral-900 text-red-500": "")}
                                             onClick={handleclickwishlist}
                                         >
-                                            {isClick ? (
+                                            {isWishlisted ? (
                                                 <div className="group flex gap-3">
                                                     {Icon && <Icon className="w-4 h-4 group-hover:fill-neutral-900 dark:group-hover:fill-neutral-50 fill-red-500" />}
                                                     {item.label}

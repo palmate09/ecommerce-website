@@ -1,4 +1,5 @@
 import { useCart } from "@/context/CartContext"
+import { useCartActions } from "@/hooks"
 import { Footer, Navbar } from "@/layouts"
 import { cn } from "@/utils/cn"
 import { IconCreditCardPay, IconMinus, IconPlus, IconTrash } from "@tabler/icons-react"
@@ -25,7 +26,8 @@ interface Feature {
 export function CartPage ({className}: exportType
 ) {
 
-    const { cart, dispatch, totalCountMemoised, totalPriceMemoised } = useCart()
+    const { cart,  totalCountMemoised, totalPriceMemoised } = useCart()
+    const { removeItem, increaseQuantity, decreaseQuantity, clearCart } = useCartActions(); 
     const navigate = useNavigate()
 
     const tax = totalPriceMemoised * 0.08
@@ -108,7 +110,7 @@ export function CartPage ({className}: exportType
                         <div className="flex-2 h-fit border rounded-2xl border-neutral-200 dark:border-neutral-700 p-5 shadow dark:shadow-2xl dark:shadow-black/30 py-6">
                             <div className="flex items-center justify-between px-2">
                                 <h1 className="text-base font-semibold text-neutral-900 dark:text-white font-finlandica ">Cart Items</h1>
-                                <button className="group flex text-sm text-neutral-500 dark:text-neutral-400 font-medium font-finlandica capitalize gap-3 items-center hover:bg-amber-100/50 dark:hover:bg-neutral-700 py-1 px-2 rounded-full transition-colors duration-300 hover:text-red-500" onClick={() => dispatch({type: "CLEAR_CART"})}>
+                                <button className="group flex text-sm text-neutral-500 dark:text-neutral-400 font-medium font-finlandica capitalize gap-3 items-center hover:bg-amber-100/50 dark:hover:bg-neutral-700 py-1 px-2 rounded-full transition-colors duration-300 hover:text-red-500" onClick={() => clearCart()}>
                                     <IconTrash size={14} className="group-hover:text-red-500"/>
                                     clear all 
                                 </button>
@@ -128,7 +130,7 @@ export function CartPage ({className}: exportType
                                                         <h2 className="text-base font-semibold text-neutral-900 dark:text-white font-finlandica">{item.title}</h2>
                                                         <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">${Number(item.price).toFixed(2)} <span className="font-finlandica">each</span></p>
                                                     </div>
-                                                    <button className="cursor-pointer" onClick={() => dispatch({type: "REMOVE_ITEM", pyload: item.id})}>
+                                                    <button className="cursor-pointer" onClick={() => removeItem(item.id)}>
                                                         <IconTrash size={15} className="text-neutral-500 dark:text-neutral-400"/>
                                                     </button>
                                                 </div>
@@ -136,12 +138,12 @@ export function CartPage ({className}: exportType
                                                 <div className="flex justify-between items-center">
                                                     <div className="rounded-full border border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
                                                         <button className={cn("group hover:bg-amber-100/50 dark:hover:bg-neutral-700 h-full rounded-l-full px-2 transition-colors duration-300 font-bold py-1.5")}
-                                                        onClick={() => dispatch({type: "DECREASE", pyload: item.id})}>
+                                                        onClick={() => decreaseQuantity(item.id)}>
                                                             <IconMinus size={13} className={cn("group-hover:text-amber-500" , item.quantity === 1 ? "text-neutral-400" : "text-neutral-900 dark:text-white")}/>
                                                         </button>
                                                         <p className="text-sm font-medium px-3 dark:text-white">{item.quantity}</p>
                                                         <button className="group hover:bg-amber-100/50 dark:hover:bg-neutral-700 h-full rounded-r-full px-2 transition-colors duration-300"
-                                                        onClick={() => dispatch({type: "INCREASE", pyload: item.id})}>
+                                                        onClick={() => increaseQuantity(item.id)}>
                                                             <IconPlus size={13} className="text-neutral-900 dark:text-white group-hover:text-amber-500"/>
                                                         </button>
                                                     </div>

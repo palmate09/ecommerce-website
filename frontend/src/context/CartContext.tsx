@@ -1,8 +1,9 @@
+import { useLocalStorage } from "@/hooks"
 import { cartReducer } from "@/reducers/cartReducer"
 import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from "react"
 
 
-interface cartItem {
+export interface cartItem {
     id: number
     title: string
     price: number
@@ -23,9 +24,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const intialState: cartItem[] = JSON.parse(localStorage.getItem("cart") || "[]")
     const [cart, dispatch] = useReducer(cartReducer, intialState)
 
+    const [, setLocalStorageCart] = useLocalStorage<cartItem[]>("cart", intialState);
+
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cart))
-    }, [cart])
+        setLocalStorageCart(cart);
+    }, [cart, setLocalStorageCart]);
 
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0)
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)

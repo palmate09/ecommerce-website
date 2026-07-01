@@ -2,6 +2,8 @@ import { cn } from "@/utils/cn";
 import { IconUser, IconMail, IconLock, IconEye, IconEyeOff } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useForm } from "@/hooks";
+import { signUpSchema } from "@/validations/auth.validation";
 
 interface exportType {
     className?: string
@@ -10,6 +12,20 @@ interface exportType {
 export function SignUpPage({className}: exportType) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
+        intialValues: {
+            name: "", 
+            email: "", 
+            password: "",
+            confirmPassword: "",
+        }, 
+        schema: signUpSchema, 
+        validateOnChange: true, 
+        validateOnBlur: true, 
+        onSubmit: (formValues) => {
+            console.log("Sign Up", formValues)
+        }
+    })
 
     return (
         <section className={cn("min-h-screen w-full bg-neutral-50 dark:bg-neutral-900 flex flex-col items-center justify-center", className)}>
@@ -22,38 +38,61 @@ export function SignUpPage({className}: exportType) {
                     <p className="text-sm font-finlandica text-neutral-500 dark:text-neutral-400 mt-2">Join BloomShop and start shopping</p>
                 </div>
 
-                <form className="space-y-5">
+                <form className="space-y-5" onSubmit={handleSubmit} noValidate>
                     <div className="flex flex-col space-y-1.5">
-                        <label className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Full Name</label>
+                        <label htmlFor="name" className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Full Name</label>
                         <div className="relative">
                             <IconUser size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                             <input
+                                id="name"
+                                name="name"
                                 type="text"
                                 placeholder="John Doe"
+                                value={values.name}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                aria-invalid={Boolean(errors.name)}
+                                aria-describedby={errors.name ? "name-error" : undefined}
                                 className="w-full pl-10 pr-4 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 text-sm font-finlandica focus:outline-none focus:ring-1 focus:ring-amber-500 dark:ring-neutral-600 dark:shadow-neutral-50 shadow dark:text-white bg-transparent"
                             />
                         </div>
+                        {errors.name && <p id="name-error" className="text-xs font-finlandica text-red-500">{errors.name}</p>}
                     </div>
 
                     <div className="flex flex-col space-y-1.5">
-                        <label className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Email</label>
+                        <label htmlFor="email" className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Email</label>
                         <div className="relative">
                             <IconMail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                             <input
+                                id="email"
+                                name="email"
                                 type="email"
                                 placeholder="you@example.com"
+                                value={values.email}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                aria-invalid={Boolean(errors.email)}
+                                aria-describedby={errors.email ? "email-error" : undefined}
                                 className="w-full pl-10 pr-4 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 text-sm font-finlandica focus:outline-none focus:ring-1 focus:ring-amber-500 dark:ring-neutral-600 dark:shadow-neutral-50 shadow dark:text-white bg-transparent"
                             />
                         </div>
+                        {errors.email && <p id="email-error" className="text-xs font-finlandica text-red-500">{errors.email}</p>}
                     </div>
 
                     <div className="flex flex-col space-y-1.5">
-                        <label className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Password</label>
+                        <label htmlFor="password" className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Password</label>
                         <div className="relative">
                             <IconLock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                             <input
+                                id="password"
+                                name="password"
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Create a password"
+                                value={values.password}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                aria-invalid={Boolean(errors.password)}
+                                aria-describedby={errors.password ? "password-error" : undefined}
                                 className="w-full pl-10 pr-10 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 text-sm font-finlandica focus:outline-none focus:ring-1 focus:ring-amber-500 dark:ring-neutral-600 dark:shadow-neutral-50 shadow dark:text-white bg-transparent"
                             />
                             <button
@@ -64,15 +103,23 @@ export function SignUpPage({className}: exportType) {
                                 {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                             </button>
                         </div>
+                        {errors.password && <p id="password-error" className="text-xs font-finlandica text-red-500">{errors.password}</p>}
                     </div>
 
                     <div className="flex flex-col space-y-1.5">
-                        <label className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Confirm Password</label>
+                        <label htmlFor="confirmPassword" className="text-sm font-semibold font-finlandica text-neutral-900 dark:text-white">Confirm Password</label>
                         <div className="relative">
                             <IconLock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                             <input
+                                id="confirmPassword"
+                                name="confirmPassword"
                                 type={showConfirm ? "text" : "password"}
                                 placeholder="Confirm your password"
+                                value={values.confirmPassword}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                aria-invalid={Boolean(errors.confirmPassword)}
+                                aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
                                 className="w-full pl-10 pr-10 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 text-sm font-finlandica focus:outline-none focus:ring-1 focus:ring-amber-500 dark:ring-neutral-600 dark:shadow-neutral-50 shadow dark:text-white bg-transparent"
                             />
                             <button
@@ -83,13 +130,15 @@ export function SignUpPage({className}: exportType) {
                                 {showConfirm ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                             </button>
                         </div>
+                        {errors.confirmPassword && <p id="confirm-password-error" className="text-xs font-finlandica text-red-500">{errors.confirmPassword}</p>}
                     </div>
 
                     <button
                         type="submit"
+                        disabled={isSubmitting}
                         className="w-full py-2.5 rounded-full bg-amber-500 text-neutral-900 font-bold font-finlandica text-sm shadow-md hover:bg-amber-500/90 transition-colors cursor-pointer"
                     >
-                        Create Account
+                        {isSubmitting ? "Creating Account..." : "Create Account"}
                     </button>
                 </form>
 
