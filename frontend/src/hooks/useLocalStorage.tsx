@@ -30,9 +30,9 @@ export function useLocalStorage<T>(
     const getValue = useCallback(() => {
         try {
             const item = localStorage.getItem(key)
-            return item ? (JSON.parse(item) as T) : null;
+            return item ? (JSON.parse(item) as T) : undefined;
         }catch {
-            return null; 
+            return undefined; 
         }
     }, [key])
 

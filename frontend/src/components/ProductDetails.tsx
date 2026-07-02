@@ -28,7 +28,7 @@ export function ProductDetails ({
 
     const { addItem } = useCartActions(); 
     const navigate = useNavigate();
-    const [count, {increment, decrement, reset}] = useCounter(1);
+    const [count, {increment, decrement}] = useCounter(1);
     const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
 

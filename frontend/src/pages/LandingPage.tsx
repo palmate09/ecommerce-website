@@ -1,4 +1,4 @@
-import { ProductCard } from "@/components/ProductCard";
+import { ProductGrid } from "@/components/ProductGrid";
 import { Footer } from "@/layouts/Footer";
 import { Navbar } from "@/layouts/Navbar";
 import { cn } from "@/utils/cn";
@@ -63,7 +63,7 @@ export function LandingPage({className}: LandingPageType) {
 
     const handleclick= useCallback((id: number) => {
         navigate(`/product/${id}`); 
-    }, [])
+    }, [navigate])
 
     const handleFilterSelect = useCallback((item: string) => {
         setActiveFilter(prev => prev === item ? null : item);
@@ -72,7 +72,7 @@ export function LandingPage({className}: LandingPageType) {
 
     return (
         <section className={cn("min-h-screen w-full bg-neutral-50 dark:bg-neutral-900", className)}>
-            <Navbar className="z-50/"/>
+            <Navbar className="z-50"/>
 
             <section className="flex-1 max-w-360 mx-auto px-5 mb-15">
                 <div className="mt-10 mb-10 max-w-xl mx-auto px-10 pt-5 flex items-center flex-col gap-2 text-center">
@@ -154,18 +154,15 @@ export function LandingPage({className}: LandingPageType) {
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                    {displayProducts.map((product, index) => (
-                        <ProductCard 
-                            key={index}
-                            id={product.id}
-                            title={product.title}
-                            price={product.price}
-                            image={product.image.src}
-                            onclick={() => handleclick(product.id)}
+                <ProductGrid>
+                    {displayProducts.map((product) => (
+                        <ProductGrid.Item
+                            key={product.id}
+                            product={product}
+                            onSelect={handleclick}
                         />
                     ))}
-                </div>
+                </ProductGrid>
             </section>
 
             <hr className="text-neutral-200 dark:text-neutral-700"/>
