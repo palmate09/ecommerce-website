@@ -13,7 +13,7 @@ export function SignUpPage({className}: exportType) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
-        intialValues: {
+        initialValues: {
             name: "", 
             email: "", 
             password: "",

@@ -13,25 +13,23 @@ export function Practice({ className, ...props }: PracticeProps) {
     const inputRef = useRef<HTMLInputElement>(null); 
     const refInput = useRef<HTMLInputElement>(null); 
 
-    const keyDownHandler = (e: KeyboardEvent) => {
-        if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-            console.log("You just pressed Control and K!")
-            e.preventDefault(); 
-
-            if(!inputRef.current) return; 
-
-            if(isFocused){
-                inputRef.current?.blur()
-            }else {
-                inputRef.current?.focus();
-            }
-        }
-    };
-    
     useEffect(() => {
-        // auto focus by clicking on ctrl + K 
-        window.addEventListener("keydown", keyDownHandler); 
+        const keyDownHandler = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+                console.log("You just pressed Control and K!")
+                e.preventDefault(); 
 
+                if (!inputRef.current) return; 
+
+                if (isFocused) {
+                    inputRef.current?.blur()
+                } else {
+                    inputRef.current?.focus();
+                }
+            }
+        };
+
+        window.addEventListener("keydown", keyDownHandler); 
         return () => window.removeEventListener("keydown", keyDownHandler);
     }, [isFocused])
 

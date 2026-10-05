@@ -19,6 +19,12 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0); 
   const defferedSearhQuery = useDeferredValue(searchQuery); 
+  const [prevQuery, setPrevQuery] = useState(defferedSearhQuery);
+
+  if (prevQuery !== defferedSearhQuery) {
+    setPrevQuery(defferedSearhQuery);
+    setSelectedIndex(0);
+  }
 
   const slug = SearchResult.flatMap((item) =>
     item.sectionSearchResult
@@ -33,12 +39,11 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
   const navigate = useNavigate();
 
   function handleredirect(label: string) {
-    slug.map((item) => {
-      if (item.page == label) {
-        navigate(`${item.redirect}`);
-        setIsOpen(false);
-      }
-    });
+    const item = slug.find((s) => s.page === label);
+    if (item) {
+      navigate(`${item.redirect}`);
+      setIsOpen(false);
+    }
   }
 
   const filteredSearch = SearchResult.map((section) => ({
@@ -63,10 +68,6 @@ export function Test({ className, isOpen: externalOpen, onClose }: exportType) {
         if(selected) handleredirect(selected.page); 
     }
   }
-
-  useEffect(() => {
-    setSelectedIndex(0); 
-  }, [defferedSearhQuery]); 
 
   useEffect(() => {
     if (isOpen) {

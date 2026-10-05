@@ -19,7 +19,8 @@ export function useLocalStorage<T>(
                 const valueToStore = value instanceof Function ? value(prev) : value
                 try {
                     localStorage.setItem(key, JSON.stringify(valueToStore))
-                } catch {
+                } catch (error) {
+                    console.warn(`Error setting localStorage key "${key}":`, error)
                 }
                 return valueToStore
             })

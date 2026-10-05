@@ -4,7 +4,6 @@ import { IconCheck } from "@tabler/icons-react";
 import { Heart, Eye, ShoppingCart, Loader } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
 import Modal from "./Modal";
 
 interface productType {
@@ -52,7 +51,7 @@ export const ProductCard = memo(({
 
     }, [addItem, id, title, price, image])
 
-    const handleclick = useCallback((e:any) => {
+    const handleclick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
         setIsClick((prev: boolean) => {
@@ -60,7 +59,7 @@ export const ProductCard = memo(({
             localStorage.setItem(key, JSON.stringify(next))
             return next
         }); 
-    }, [setIsClick, key])
+    }, [key])
 
     const handleQuickView = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
@@ -84,7 +83,7 @@ export const ProductCard = memo(({
                     <Heart className={cn("w-4 h-4 dark:text-white transition-colors duration-150", isClick ? "bg-red-500 fill-red-500 text-white" : " hover:bg-blue-50")} />
                 </button>
 
-                <Link to={"/"} onClick={handleQuickView} className="block relative">
+                <div onClick={handleQuickView} className="block relative cursor-pointer">
 
                     <div className="aspect-square overflow-hidden animation:toast-in-right">
 
@@ -117,7 +116,7 @@ export const ProductCard = memo(({
 
                     </div>
 
-                </Link>
+                </div>
 
             </div>
 

@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Notifications\Notifiable;
 use Override;
 
 #[Fillable(['user_id', 'token', 'expire_at', 'last_used_at'])]
 class SessionToken extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $hidden = [
         'token',

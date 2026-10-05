@@ -21,7 +21,7 @@ class ValidateSessionToken
         $token = $request->bearerToken(); 
 
         if(!$token) {
-            return response()->json(['message' => 'Unauthorized: Token missing'], 402); 
+            return response()->json(['message' => 'Unauthorized: Token missing'], 401); 
         }
 
         // 2. Look up the session token by hashed token.

@@ -11,8 +11,8 @@ interface exportType {
 
 export function SignInPage({className}: exportType) {
     const [showPassword, setShowPassword] = useState(false);
-    const { values,errors,isSubmitting,handleChange,handleBlur,handleSubmit } = useForm({
-        intialValues: {
+    const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
+        initialValues: {
             email: "",
             password: "",
         },

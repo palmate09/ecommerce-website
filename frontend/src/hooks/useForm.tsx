@@ -1,12 +1,13 @@
 
 import { useState } from 'react'
-import {z} from 'zod'
+import { z } from 'zod'
 
 type FormErrors<T> = Partial<Record<keyof T, string>>
 type FormTouched<T> = Partial<Record<keyof T, boolean>>
 
 type UseFormParams<T extends Record<string, unknown>> = {
-    intialValues: T
+    initialValues?: T
+    intialValues?: T
     schema?: z.ZodType<T>
     onSubmit: (values: T) => void | Promise<void>
     validateOnBlur?: boolean
@@ -33,18 +34,19 @@ type useFormReturn<T> = {
     setErrors: React.Dispatch<React.SetStateAction<FormErrors<T>>>
 }
 
-export function useForm<T extends Record<string, unknown>> ({
+export function useForm<T extends Record<string, unknown>>({
+    initialValues,
     intialValues, 
     schema, 
     onSubmit, 
     validateOnBlur = true,
     validateOnChange = false
-}: UseFormParams<T>) : useFormReturn<T> {
-
-    const [ values, setValues ] = useState<T>(intialValues); 
-    const [ errors, setErrors ] = useState<FormErrors<T>>({}); 
-    const [ touched, setTouched ] = useState<FormTouched<T>>({}); 
-    const [ isSubmitting, setIsSubmitting ] = useState(false);
+}: UseFormParams<T>): useFormReturn<T> {
+    const defaultValues = (initialValues ?? intialValues ?? {}) as T;
+    const [values, setValues] = useState<T>(defaultValues); 
+    const [errors, setErrors] = useState<FormErrors<T>>({}); 
+    const [touched, setTouched] = useState<FormTouched<T>>({}); 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const validateForm = (formValues: T): FormErrors<T> => {
         if(!schema) return {} 
@@ -117,7 +119,7 @@ export function useForm<T extends Record<string, unknown>> ({
     }
 
     const resetForm = () => {
-        setValues(intialValues);
+        setValues(defaultValues);
         setErrors({})
         setTouched({})
         setIsSubmitting(false); 

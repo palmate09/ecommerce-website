@@ -48,7 +48,7 @@ export function LandingPage({className}: LandingPageType) {
     }, [deferredSearchTerm]);
 
     const displayProducts = useMemo(() => {
-        let result = [...products];
+        const result = [...products];
 
         if (activeFilter === "name") {
             result.sort((a, b) => a.name.localeCompare(b.name));

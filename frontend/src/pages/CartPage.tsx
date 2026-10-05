@@ -24,43 +24,41 @@ interface Feature {
     Icon: React.ComponentType<{className?: string}>
 }
 
-export function CartPage ({className}: exportType
-) {
+const ORDER_SUMMARY_POINTS: orderSummaryPoint[] = [
+    {
+        id: 1, 
+        description: "Secure SSL checkout", 
+        Icon: Shield
+    }, 
+    {
+        id: 2, 
+        description: "Free returns within 30 days", 
+        Icon: Truck
+    }, 
+    {
+        id: 3, 
+        description: "24/7 customer support", 
+        Icon: Heart
+    }
+];
 
-    const { cart,  totalCountMemoised, totalPriceMemoised } = useCart()
+const FEATURES: Feature[] = [
+    {
+        id: 1, 
+        description: "Free shipping over $50", 
+        Icon: TruckIcon
+    }, 
+    {
+        id: 2, 
+        description: "Secure checkout", 
+        Icon: Shield
+    }
+];
+
+export function CartPage ({className}: exportType) {
+    const { cart, totalCountMemoised, totalPriceMemoised } = useCart()
     const { removeItem, increaseQuantity, decreaseQuantity, clearCart } = useCartActions(); 
     const navigate = useNavigate()
-
-    const orderSummaryPoints : orderSummaryPoint[] = [
-        {
-            id: 1, 
-            description: "Secure SSL checkout", 
-            Icon: Shield
-        }, 
-        {
-            id: 2, 
-            description: "Free returns within 30 days", 
-            Icon: Truck
-        }, 
-        {
-            id: 3, 
-            description: "24/7 customer support", 
-            Icon: Heart
-        }
-    ]
-
-    const features: Feature[] = [
-        {
-            id: 1, 
-            description: "Free shipping over $50", 
-            Icon: TruckIcon
-        }, 
-        {
-            id: 2, 
-            description: "Secure checkout", 
-            Icon: Shield
-        }
-    ]
 
     function handleProductRedirect() {
         navigate(`/`); 
@@ -79,7 +77,7 @@ export function CartPage ({className}: exportType
                         <p className="text-base md:text-lg font-medium font-finlandica text-neutral-500 dark:text-neutral-400">Looks like you haven't added anything to your cart yet.</p>
                         <button onClick={handleProductRedirect} className="mt-3 font-semibold px-6 py-2.5 bg-amber-500 rounded-full text-sm font-finlandica hover:bg-amber-500/90 cursor-pointer text-neutral-900 capitalize">continue Shopping</button>
                         <div className="flex gap-8">
-                            {features.map((item) => {
+                            {FEATURES.map((item) => {
                                 const Icon = item.Icon;
 
                                 return (
@@ -132,7 +130,7 @@ export function CartPage ({className}: exportType
                         <CartItemList.Summary
                             totalCount={totalCountMemoised}
                             totalPrice={totalPriceMemoised}
-                            points={orderSummaryPoints}
+                            points={ORDER_SUMMARY_POINTS}
                         />
                     </div>
 

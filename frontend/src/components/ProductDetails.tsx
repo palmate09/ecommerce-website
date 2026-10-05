@@ -18,6 +18,19 @@ const Ratings = memo(function Ratings({ rating }: { rating: number }) {
     );
 });
 
+const PRODUCT_ACTION_BUTTONS: buttonType[] = [
+    {
+        id: 1,
+        label: "Add to Wishlist",
+        Icon: HeartIcon,
+    },
+    {
+        id: 2,
+        label: "Share",
+        Icon: Share2,
+    },
+];
+
 export function ProductDetails ({
     product,
     className
@@ -28,31 +41,9 @@ export function ProductDetails ({
 
     const { addItem } = useCartActions(); 
     const navigate = useNavigate();
-    const [count, {increment, decrement}] = useCounter(1);
+    const [count, { increment, decrement }] = useCounter(1);
     const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
-
-
-    const buttons : buttonType[] = [
-        {
-            id: 1,
-            label: "Add to Wishlist",
-            Icon: HeartIcon
-        },
-        {
-            id: 2,
-            label: "Share",
-            Icon: Share2
-        }
-    ]
-
-    function handleclickplus () {
-        increment(); 
-    }
-
-    function handleclickminus () {
-        decrement(); 
-    }
 
 
     const handleclick = useCallback(() => {
@@ -88,7 +79,7 @@ export function ProductDetails ({
             setIsAdded(false);
             navigate("/cart");
         }, 1500)
-    }, [count, addItem, product])
+    }, [count, addItem, product, navigate])
 
     const [isWishlisted, toggleWishlist] = useToggle(false);
 
@@ -148,8 +139,9 @@ export function ProductDetails ({
                         <div className="h-9 w-30 border rounded-full border-neutral-200 dark:border-neutral-700 flex justify-between items-center ">
 
                             <button
-                                className="px-3 hover:bg-amber-100/20 dark:hover:bg-neutral-800 transition-all duration-150 h-full rounded-l-full"
-                                onClick={handleclickminus}
+                                className="px-3 hover:bg-amber-100/20 dark:hover:bg-neutral-800 transition-all duration-150 h-full rounded-l-full cursor-pointer"
+                                onClick={decrement}
+                                aria-label="Decrease quantity"
                             >
                                 <IconMinus className="w-4 h-4 text-neutral-500 dark:text-neutral-400"/>
                             </button>
@@ -162,7 +154,8 @@ export function ProductDetails ({
 
                             <button
                                 className="group px-3 hover:bg-amber-100/30 dark:hover:bg-neutral-800 transition-all duration-150 h-full rounded-r-full cursor-pointer"
-                                onClick={handleclickplus}
+                                onClick={increment}
+                                aria-label="Increase quantity"
                             >
                                 <IconPlus className="w-4 h-4 text-neutral-900 dark:text-white group-hover:text-amber-600 transition-colors duration-150"/>
                             </button>
@@ -206,7 +199,7 @@ export function ProductDetails ({
                         </div>
 
                         <div className="group rounded-full flex gap-10 mt-2 px-2 items-center">
-                            {buttons.map((item) => {
+                            {PRODUCT_ACTION_BUTTONS.map((item) => {
                                 const Icon = item.Icon;
 
                                 return (
