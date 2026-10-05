@@ -1,10 +1,10 @@
-import { useCart } from "@/context/CartContext"
 import { cn } from "@/utils/cn"
 import { IconCheck, IconMinus, IconPlus } from "@tabler/icons-react"
 import { HeartIcon, Loader, Share2, StarIcon } from "lucide-react"
 import { Fragment, memo, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { product, buttonType } from "@/data/products"
+import { useCartActions, useCounter, useToggle } from "@/hooks"
 
 const Ratings = memo(function Ratings({ rating }: { rating: number }) {
     if (rating <= 0) return null;
@@ -18,6 +18,19 @@ const Ratings = memo(function Ratings({ rating }: { rating: number }) {
     );
 });
 
+const PRODUCT_ACTION_BUTTONS: buttonType[] = [
+    {
+        id: 1,
+        label: "Add to Wishlist",
+        Icon: HeartIcon,
+    },
+    {
+        id: 2,
+        label: "Share",
+        Icon: Share2,
+    },
+];
+
 export function ProductDetails ({
     product,
     className
@@ -26,44 +39,18 @@ export function ProductDetails ({
     className?: string
 }){
 
+    const { addItem } = useCartActions(); 
     const navigate = useNavigate();
-    const [count, setCount] = useState(1);
+    const [count, { increment, decrement }] = useCounter(1);
     const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
-    const [isClick, setIsClick] = useState(false);
-
-    const { dispatch } = useCart();
-
-    const buttons : buttonType[] = [
-        {
-            id: 1,
-            label: "Add to Wishlist",
-            Icon: HeartIcon
-        },
-        {
-            id: 2,
-            label: "Share",
-            Icon: Share2
-        }
-    ]
-
-    function handleclickplus () {
-        setCount((prev) => prev + 1)
-    }
-
-    function handleclickminus () {
-        setCount((prev) => (prev > 1 ? prev - 1 : 1));
-    }
 
 
     const handleclick = useCallback(() => {
         setIsAdding(true); 
 
         for(let i = 0; i<count; i++){
-            dispatch({
-                type: "ADD_ITEM", 
-                payload: { id: product.id, title: product.name, price: product.price, image: product.image.src}
-            })
+            addItem({ id: product.id, title: product.name, price: product.price, image: product.image.src})
         }
 
         setTimeout(() => {
@@ -74,16 +61,13 @@ export function ProductDetails ({
         setTimeout(() => {
             setIsAdded(false); 
         }, 1500)
-    }, [count, dispatch, product])
+    }, [count, addItem, product])
 
     const handleBuyNow =  useCallback(() => {
         setIsAdding(true);
 
         for(let i = 0; i< count; i++){
-            dispatch({
-                type: "ADD_ITEM",
-                payload: { id: product.id, title: product.name, price: product.price, image: product.image.src}
-            })
+            addItem({ id: product.id, title: product.name, price: product.price, image: product.image.src})
         }
 
         setTimeout(() => {
@@ -95,11 +79,13 @@ export function ProductDetails ({
             setIsAdded(false);
             navigate("/cart");
         }, 1500)
-    }, [count, dispatch, product])
+    }, [count, addItem, product, navigate])
 
-    const handleclickwishlist= useCallback(() =>  {
-        setIsClick((prev) => !prev)
-    }, [])
+    const [isWishlisted, toggleWishlist] = useToggle(false);
+
+    const handleclickwishlist = useCallback(() => {
+        toggleWishlist();
+    }, [toggleWishlist]);
 
 
     return (
@@ -153,8 +139,9 @@ export function ProductDetails ({
                         <div className="h-9 w-30 border rounded-full border-neutral-200 dark:border-neutral-700 flex justify-between items-center ">
 
                             <button
-                                className="px-3 hover:bg-amber-100/20 dark:hover:bg-neutral-800 transition-all duration-150 h-full rounded-l-full"
-                                onClick={handleclickminus}
+                                className="px-3 hover:bg-amber-100/20 dark:hover:bg-neutral-800 transition-all duration-150 h-full rounded-l-full cursor-pointer"
+                                onClick={decrement}
+                                aria-label="Decrease quantity"
                             >
                                 <IconMinus className="w-4 h-4 text-neutral-500 dark:text-neutral-400"/>
                             </button>
@@ -167,7 +154,8 @@ export function ProductDetails ({
 
                             <button
                                 className="group px-3 hover:bg-amber-100/30 dark:hover:bg-neutral-800 transition-all duration-150 h-full rounded-r-full cursor-pointer"
-                                onClick={handleclickplus}
+                                onClick={increment}
+                                aria-label="Increase quantity"
                             >
                                 <IconPlus className="w-4 h-4 text-neutral-900 dark:text-white group-hover:text-amber-600 transition-colors duration-150"/>
                             </button>
@@ -211,17 +199,17 @@ export function ProductDetails ({
                         </div>
 
                         <div className="group rounded-full flex gap-10 mt-2 px-2 items-center">
-                            {buttons.map((item) => {
+                            {PRODUCT_ACTION_BUTTONS.map((item) => {
                                 const Icon = item.Icon;
 
                                 return (
                                     <Fragment key={item.id}>
                                     {(item.label).toLowerCase() === ("add to wishlist").toLowerCase() ?
                                         <button
-                                            className={cn("hover:bg-amber-100/50 rounded-full py-1 px-3 flex gap-3 items-center text-[11px] font-semibold font-finlandica text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300", isClick ? "hover:text-neutral-900 text-red-500": "")}
+                                            className={cn("hover:bg-amber-100/50 rounded-full py-1 px-3 flex gap-3 items-center text-[11px] font-semibold font-finlandica text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300", isWishlisted ? "hover:text-neutral-900 text-red-500": "")}
                                             onClick={handleclickwishlist}
                                         >
-                                            {isClick ? (
+                                            {isWishlisted ? (
                                                 <div className="group flex gap-3">
                                                     {Icon && <Icon className="w-4 h-4 group-hover:fill-neutral-900 dark:group-hover:fill-neutral-50 fill-red-500" />}
                                                     {item.label}

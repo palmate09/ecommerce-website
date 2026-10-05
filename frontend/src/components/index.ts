@@ -1,2 +1,5 @@
 export { ProductCard } from "@/components/ProductCard"
 export { ProductDetails} from "@/components/ProductDetails"
+export { ErrorBoundary } from "@/components/ErrorBoundary"
+export { CartItemList } from "@/components/CartItemList"
+export { ProductGrid } from "@/components/ProductGrid"

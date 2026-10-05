@@ -1,44 +1,31 @@
+import type { cartItem } from "@/context/CartContext";
 
-interface cartItem {
-    id: number, 
-    title: string, 
-    price: number,
-    image: string,
-    quantity: number
-}
-
-type CartAction = 
+export type CartAction = 
     | {
-        type: "ADD_ITEM", 
-        payload: Omit<cartItem , "quantity">; 
+        type: "ADD_ITEM"; 
+        payload: Omit<cartItem, "quantity">; 
     }
-
-    |{
-        type: "REMOVE_ITEM", 
-        pyload: number
+    | {
+        type: "REMOVE_ITEM"; 
+        payload: number;
     }
-
-    |{
-        type: "INCREASE", 
-        pyload: number
+    | {
+        type: "INCREASE"; 
+        payload: number;
     }
-
-    |{
-        type: "DECREASE", 
-        pyload: number
+    | {
+        type: "DECREASE"; 
+        payload: number;
     }
-
-    |{
-        type: "CLEAR_CART",
-        payload: number
+    | {
+        type: "CLEAR_CART";
     };
 
-
-export function cartReducer (state: cartItem[] , action: CartAction) {
+export function cartReducer(state: cartItem[], action: CartAction): cartItem[] {
 
     switch(action.type){
 
-        case "ADD_ITEM": 
+        case "ADD_ITEM": {
             const exists = state.find(
                 item => item.id === action.payload.id
             )
@@ -58,10 +45,11 @@ export function cartReducer (state: cartItem[] , action: CartAction) {
                     quantity: 1
                 }
             ]
+        }
         
         case "REMOVE_ITEM": 
             return state.filter(
-                item => item.id !== action.pyload
+                item => item.id !== action.payload
             )
         
         case "CLEAR_CART": 
@@ -70,7 +58,7 @@ export function cartReducer (state: cartItem[] , action: CartAction) {
 
         case "INCREASE": 
             return state.map(item =>
-                item.id === action.pyload 
+                item.id === action.payload 
                 ? {
                     ...item, 
                     quantity: item.quantity + 1
@@ -80,7 +68,7 @@ export function cartReducer (state: cartItem[] , action: CartAction) {
         
         case "DECREASE": 
             return state.map(item => 
-                item.id === action.pyload 
+                item.id === action.payload 
                 ? {
                     ...item, 
                     quantity: item.quantity - 1 
@@ -89,6 +77,8 @@ export function cartReducer (state: cartItem[] , action: CartAction) {
             ).filter(
                 item => item.quantity > 0
             )
+        default:
+            return state;
     }
 
 }

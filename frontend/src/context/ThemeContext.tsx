@@ -1,4 +1,5 @@
-import { createContext, useLayoutEffect, useState, type ReactNode } from "react";
+import { useLocalStorage } from "@/hooks";
+import { createContext, useLayoutEffect, type ReactNode } from "react";
 
 interface ThemeContextType {
     darkMode: boolean;
@@ -12,25 +13,15 @@ export const ThemeContext = createContext<ThemeContextType>({
 
 export function ThemeContextProvider({ children }: { children: ReactNode }) {
     // Use useLayoutEffect so the initial DOM matches the state before paint (avoid FOUC)
-    const [darkMode, setDarkMode] = useState<boolean>(() => {
-        if (typeof window === "undefined") return false;
-        const stored = localStorage.getItem("ThemeMode");
-        if (stored) {
-            return stored === "dark";
-        }
+    const prefersDark = 
+        typeof window !== "undefined"
+            ? window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false
+            : false; 
+    
+    const [darkMode , setDarkMode] = useLocalStorage("ThemeMode", prefersDark); 
         
-        // fallback to system preference
-        return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
-    });
-
     useLayoutEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add("dark");
-            localStorage.setItem("ThemeMode", "dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-            localStorage.setItem("ThemeMode", "light");
-        }
+        document.documentElement.classList.toggle("dark", darkMode)
     }, [darkMode]);
 
     const toggleDarkMode = () => setDarkMode(prev => !prev);
